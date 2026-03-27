@@ -102,6 +102,7 @@
         .avatar-lg { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: white; background: var(--primary); }
         .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         
+        /* 35/65 Split Grid */
         .content-grid { display: grid; grid-template-columns: 320px 1fr; gap: 32px; align-items: start; }
         
         .panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
@@ -130,7 +131,7 @@
         #pipeline-view { display: flex; gap: 24px; overflow-x: auto; padding-bottom: 20px; height: 100%; }
         .kanban-col { flex: 0 0 340px; display: flex; flex-direction: column; background: var(--bg-base); border-radius: var(--radius-lg); padding: 16px; border: 1px solid var(--border); }
         .kanban-header { padding-bottom: 16px; margin-bottom: 16px; border-bottom: 2px solid var(--border); font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
-        .kanban-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .kanban-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; min-height: 100px; }
         .kanban-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; cursor: grab; box-shadow: var(--shadow-sm); transition: var(--transition); border-left: 4px solid var(--border); }
         .kanban-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-left-color: var(--primary); }
         .kanban-card h4 { margin: 0 0 4px 0; font-size: 0.95rem; }
@@ -158,7 +159,6 @@
             .top-bar { padding: 0 20px; }
             #btn-export-csv { display: none; }
             .view-container { padding: 20px; padding-bottom: 100px;}
-            #cloud-status { bottom: 85px; }
         }
     </style>
 </head>
@@ -332,23 +332,19 @@
         const appContainer = document.getElementById('app-container');
         const cloudStatus = document.getElementById('cloud-status');
 
-        // LISTEN FOR AUTHENTICATION STATE
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Logged In
                 authOverlay.style.display = 'none';
                 appContainer.style.display = 'flex';
                 cloudStatus.innerText = '☁️ Secure Cloud Sync';
-                window.initCRMData(); // Load data only after login
+                window.initCRMData(); 
             } else {
-                // Logged Out
                 authOverlay.style.display = 'flex';
                 appContainer.style.display = 'none';
                 cloudStatus.innerText = '🔒 Please Login';
             }
         });
 
-        // HANDLE LOGIN
         document.getElementById('auth-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('auth-email').value;
@@ -356,14 +352,11 @@
             const errDiv = document.getElementById('auth-error');
             errDiv.innerText = "Authenticating...";
             
-            signInWithEmailAndPassword(auth, email, pass)
-                .catch((error) => {
-                    errDiv.innerText = "Error: Invalid credentials or account not found.";
-                    console.error(error);
-                });
+            signInWithEmailAndPassword(auth, email, pass).catch((error) => {
+                errDiv.innerText = "Error: Invalid credentials or account not found.";
+            });
         });
 
-        // HANDLE LOGOUT
         document.getElementById('btn-logout').addEventListener('click', () => {
             signOut(auth).then(() => {
                 document.getElementById('auth-email').value = '';
@@ -381,7 +374,6 @@
         let crmData = defaultData;
         let activeContact = null; let editingId = null; let searchQuery = ''; let actParentName = 'Global Directory';
 
-        // This is called by Firebase AFTER successful login
         window.initCRMData = async () => {
             try {
                 const docSnap = await window.fbGetDoc(window.fbDoc(window.db, "crm", "master_live_v4"));
@@ -395,7 +387,7 @@
 
         const save = async () => { 
             try { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v4"), crmData); } catch(e) {}
-            renderTree(); updateDashboard(); 
+            renderTree(); updateDashboard(); renderKanban();
             if (activeContact) loadProfile(activeContact, actParentName); 
         };
 
@@ -431,6 +423,7 @@
         document.getElementById('nav-calendar').onclick = () => switchNav('calendar');
         document.getElementById('nav-pipeline').onclick = () => switchNav('pipeline');
 
+        // REPAIRED: Instant UI rendering on toggle, silent save
         function renderTree() {
             const root = document.getElementById('tree-root'); root.innerHTML = '';
             const renderNode = (node, parentEl, parentName) => {
@@ -441,7 +434,8 @@
                 const arrow = document.createElement('span');
                 if (node.children && node.children.length > 0) {
                     arrow.className = 'toggle-arrow'; arrow.innerHTML = node.isOpen ? '▼' : '▶';
-                    arrow.onclick = (e) => { e.stopPropagation(); node.isOpen = !node.isOpen; save(); };
+                    // FIX: Render UI instantly, then save silently
+                    arrow.onclick = (e) => { e.stopPropagation(); node.isOpen = !node.isOpen; renderTree(); save(); };
                 } else { arrow.className = 'toggle-placeholder'; }
                 
                 let icon = node.type === 'location' ? '📂' : node.type === 'company' ? '🏢' : '👤';
@@ -491,7 +485,6 @@
             switchNav('profile');
         }
 
-        // Action Forms
         document.getElementById('btn-edit-profile').onclick = () => {
             if(!activeContact) return;
             editingId = activeContact.id;
@@ -584,6 +577,15 @@
             }
         };
 
+        document.getElementById('btn-log-act').onclick = async () => {
+            const date = document.getElementById('act-date').value;
+            const text = document.getElementById('act-text').value;
+            if(!date || !text || !activeContact) return;
+            if(!activeContact.details.history) activeContact.details.history = [];
+            activeContact.details.history.push({ type: document.getElementById('act-type').value, date, content: text });
+            document.getElementById('act-text').value = ''; await save();
+        };
+
         function updateDashboard() {
             let count = 0, pipe = 0, active = 0;
             const walk = (n) => { count++; pipe += Number(n.details?.value || 0); if(n.details?.status==='Active') active++; if(n.children) n.children.forEach(walk); };
@@ -591,17 +593,23 @@
             document.getElementById('dash-total').innerText = count; document.getElementById('dash-active').innerText = active; document.getElementById('dash-pipe-val').innerText = formatCurrency(pipe);
         }
 
-        // Kanban & Calendar Engines
+        // REPAIRED: Kanban Drag and Drop Logic
         function renderKanban() {
             const cols = { lead: document.getElementById('col-lead'), active: document.getElementById('col-active'), closed: document.getElementById('col-closed') };
             const revs = { lead: 0, active: 0, closed: 0 };
             Object.values(cols).forEach(c => c.innerHTML = '');
+            
             function findDeals(n) {
                 const s = (n.details?.status || '').toLowerCase();
                 if (s === 'lead' || s === 'active' || s === 'closed') {
                     const card = document.createElement('div'); card.className = 'kanban-card';
+                    card.draggable = true; // FIX: Makes card grabbable
+                    card.ondragstart = (e) => { e.dataTransfer.setData('pipeline-contact-id', n.id); card.style.opacity = '0.5'; };
+                    card.ondragend = () => { card.style.opacity = '1'; };
+                    
                     card.innerHTML = `<h4>${n.name}</h4><p>${n.details.title || 'Account'}</p><div class="kanban-val">${formatCurrency(n.details.value)}</div>`;
                     card.onclick = () => loadProfile(n, 'Directory');
+                    
                     cols[s].appendChild(card); revs[s] += Number(n.details.value || 0);
                 }
                 if (n.children) n.children.forEach(findDeals);
@@ -609,6 +617,20 @@
             findDeals(crmData);
             document.getElementById('rev-lead').innerText = formatCurrency(revs.lead); document.getElementById('rev-active').innerText = formatCurrency(revs.active); document.getElementById('rev-closed').innerText = formatCurrency(revs.closed);
         }
+
+        // FIX: Global drop function
+        window.dropKanban = (e, newStatus) => {
+            const id = e.dataTransfer.getData('pipeline-contact-id');
+            const updateStatus = (n) => {
+                if (n.id === id) {
+                    if(!n.details) n.details = {};
+                    n.details.status = newStatus;
+                    return true;
+                }
+                if (n.children) return n.children.some(updateStatus);
+            };
+            if (updateStatus(crmData)) { save(); }
+        };
 
         let curM = new Date().getMonth(); let curY = new Date().getFullYear();
         window.changeMonth = (d) => { curM += d; if(curM<0){curM=11;curY--;} if(curM>11){curM=0;curY++;} renderCalendar(); };
