@@ -156,7 +156,7 @@
         /* Note Thread Items */
         .note-thread-box { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; padding-right: 4px;}
         .note-item { background: var(--bg-base); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
-        .note-item-header { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between;}
+        .note-item-header { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;}
         .note-item-text { font-size: 0.9rem; color: var(--text-main); white-space: pre-wrap; line-height: 1.4; }
         textarea.form-control { resize: vertical; min-height: 70px; line-height: 1.4; }
         
@@ -165,7 +165,7 @@
         .tl-item::after { content: ''; position: absolute; left: 4px; top: 20px; bottom: -20px; width: 2px; background: var(--border); }
         .tl-item:last-child::after { display: none; }
         
-        .tl-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .tl-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; align-items: center;}
         .tl-type { font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.05em; }
         .tl-text { font-size: 0.9rem; line-height: 1.5; color: var(--text-main); background: var(--bg-base); border: 1px solid var(--border); padding: 10px 12px; border-radius: var(--radius-sm); font-weight: 500; }
 
@@ -482,7 +482,6 @@
 
     <script>
         const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
-        // Notes initialized as an empty array to support threading
         const stateNodes = US_STATES.map(s => ({ id: 'st_'+s.toLowerCase().replace(/ /g,'_'), name: s, type: 'location', details: { status: 'Lead', history: [], notes: [] }, children: [] }));
         const defaultData = { id: 'root', name: 'Global Directory', type: 'location', isOpen: true, children: [ { id: 'loc_usa', name: 'United States', type: 'location', isOpen: true, children: stateNodes } ] };
         
@@ -634,37 +633,42 @@
                 d.customFields.forEach(cf => { cfContainer.innerHTML += `<div class="info-row"><div class="info-label">${cf.key}</div><div class="info-val">${cf.value}</div></div>`; });
             } else { cfPanel.style.display = 'none'; }
 
-            // Render Notes Thread (With Legacy String Support)
+            // Render Notes Thread (With User Auth Data)
             const notesThread = document.getElementById('prof-notes-thread');
             notesThread.innerHTML = '';
-            let noteArray = Array.isArray(d.notes) ? d.notes : (d.notes ? [{ date: 'Legacy Note', text: d.notes }] : []);
-            d.notes = noteArray; // Normalize to array internally
+            let noteArray = Array.isArray(d.notes) ? d.notes : (d.notes ? [{ date: 'Legacy Note', text: d.notes, author: 'User' }] : []);
+            d.notes = noteArray; 
             
             if(noteArray.length === 0) {
                 notesThread.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; font-style:italic; padding: 4px;">No notes have been added yet.</div>';
             } else {
                 noteArray.forEach(note => {
+                    const author = note.author || 'User';
                     notesThread.innerHTML += `
                         <div class="note-item">
-                            <div class="note-item-header"><span>Added:</span> <span>${note.date}</span></div>
+                            <div class="note-item-header">
+                                <span style="color:var(--primary);"><span style="font-size:0.8rem; margin-right:4px;">👤</span>${author}</span> 
+                                <span>${note.date}</span>
+                            </div>
                             <div class="note-item-text">${note.text}</div>
                         </div>`;
                 });
-                // Auto-scroll to bottom of notes
                 notesThread.scrollTop = notesThread.scrollHeight;
             }
             document.getElementById('prof-notes-input').value = '';
 
+            // Render Activity Feed (With User Auth Data)
             const tl = document.getElementById('prof-timeline'); tl.innerHTML = '';
             if(d.history) { [...d.history].reverse().forEach(h => {
                 const item = document.createElement('div'); item.className = 'tl-item';
-                item.innerHTML = `<div class="tl-header"><span class="tl-type">${h.type}</span><span>${h.date}</span></div><div class="tl-text">${h.content}</div>`;
+                const authorTag = h.author ? `<span style="margin-left:8px; font-weight:600; font-size:0.7rem; color:var(--text-muted); text-transform:none;">by ${h.author}</span>` : '';
+                item.innerHTML = `<div class="tl-header"><span class="tl-type">${h.type}${authorTag}</span><span>${h.date}</span></div><div class="tl-text">${h.content}</div>`;
                 tl.appendChild(item);
             }); }
             switchNav('profile');
         }
 
-        // SAVE THREADED NOTES
+        // SAVE THREADED NOTES (WITH AUTHOR)
         document.getElementById('btn-save-notes').onclick = async () => {
             const input = document.getElementById('prof-notes-input');
             const text = input.value.trim();
@@ -672,18 +676,22 @@
             
             if(!activeContact.details) activeContact.details = {};
             if(!Array.isArray(activeContact.details.notes)) {
-                activeContact.details.notes = activeContact.details.notes ? [{date: 'Legacy Note', text: activeContact.details.notes}] : [];
+                activeContact.details.notes = activeContact.details.notes ? [{date: 'Legacy Note', text: activeContact.details.notes, author: 'User'}] : [];
             }
             
             const now = new Date();
             const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             
-            activeContact.details.notes.push({ date: dateStr, text: text });
+            // Get Current User
+            const user = window.auth && window.auth.currentUser;
+            const authorName = user ? (user.displayName || user.email.split('@')[0]) : 'Unknown User';
+            
+            activeContact.details.notes.push({ date: dateStr, text: text, author: authorName });
             
             const btn = document.getElementById('btn-save-notes');
             btn.innerText = '✅ Added!';
             
-            loadProfile(activeContact, actParentName); // Refresh view
+            loadProfile(activeContact, actParentName); 
             await save();
             
             setTimeout(() => btn.innerText = '➕ Add Note', 2000);
@@ -783,12 +791,18 @@
             }
         };
 
+        // SAVE ACTIVITY FEED (WITH AUTHOR)
         document.getElementById('btn-log-act').onclick = async () => {
             const date = document.getElementById('act-date').value;
             const text = document.getElementById('act-text').value;
             if(!date || !text || !activeContact) return;
             if(!activeContact.details.history) activeContact.details.history = [];
-            activeContact.details.history.push({ type: document.getElementById('act-type').value, date, content: text });
+            
+            // Get Current User
+            const user = window.auth && window.auth.currentUser;
+            const authorName = user ? (user.displayName || user.email.split('@')[0]) : 'Unknown User';
+
+            activeContact.details.history.push({ type: document.getElementById('act-type').value, date, content: text, author: authorName });
             document.getElementById('act-text').value = ''; 
             await save(); loadProfile(activeContact, actParentName);
         };
