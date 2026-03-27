@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pro CRM - Master Edition</title>
     <style>
         /* --- MODERN UI & THEME ENGINE --- */
@@ -156,7 +156,57 @@
         .btn-remove-cf { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; padding: 0 8px; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 32px; }
         
-        #cloud-status { position: fixed; bottom: 10px; right: 10px; font-size: 0.75rem; color: var(--text-muted); z-index: 999; }
+        #cloud-status { position: fixed; bottom: 80px; right: 10px; font-size: 0.75rem; color: var(--text-muted); z-index: 999; background: var(--bg-panel); padding: 4px 8px; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+
+        /* =======================================================
+           📱 RESPONSIVE MOBILE OVERRIDES
+           ======================================================= */
+        @media (max-width: 768px) {
+            #app-container { flex-direction: column-reverse; } /* Move Nav to Bottom */
+            
+            /* Bottom Tab Bar Navigation */
+            #nav-sidebar { width: 100%; height: 65px; flex-direction: row; border-right: none; border-top: 1px solid var(--border); padding: 0 10px; justify-content: space-around; z-index: 60; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); box-sizing: border-box;}
+            .nav-item { margin: 0; width: 50px; height: 50px; }
+            .nav-spacer { display: none; }
+
+            /* Full Screen Tree/Directory on Mobile */
+            #list-sidebar { position: absolute; top: 0; left: 0; width: 100%; height: calc(100vh - 65px); z-index: 40; border-right: none; }
+            
+            /* Main Content Area */
+            #main-content { width: 100%; height: calc(100vh - 65px); }
+            .top-bar { padding: 0 16px; height: 60px; }
+            .top-bar-title { font-size: 1rem; }
+            .top-bar-actions .btn { padding: 6px 12px; font-size: 0.8rem; }
+            #btn-export-csv { display: none; } /* Hide on mobile to save space */
+            .view-container { padding: 16px; }
+
+            /* Dashboard Fixes */
+            .metric-cards { grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+            .metric-card { padding: 16px; }
+            .metric-card .value { font-size: 1.5rem; }
+
+            /* Profile Fixes */
+            .profile-header { flex-direction: column; text-align: center; gap: 12px; }
+            .profile-header .btn { align-self: stretch; width: 100%; justify-content: center; margin-top: 10px; }
+            .content-grid { grid-template-columns: 1fr; gap: 16px; } /* Stack panels */
+            
+            /* Calendar Fixes */
+            .cal-day-label { font-size: 0.7rem; }
+            .cal-day { min-height: 80px; padding: 4px; }
+            .cal-day-num { font-size: 0.75rem; }
+            .job-pill { font-size: 0.65rem; padding: 2px 4px; }
+
+            /* Pipeline/Kanban Fixes */
+            #pipeline-view { padding-bottom: 10px; }
+            .kanban-col { flex: 0 0 280px; } /* Slightly smaller columns on mobile */
+
+            /* Modal Fixes */
+            .modal-content { padding: 20px; width: 95%; margin: 10px; box-sizing: border-box;}
+            #modal-contact-fields > div { flex-direction: column !important; gap: 0 !important; }
+            .form-group { margin-bottom: 12px; }
+            .modal-actions { flex-direction: column; }
+            .modal-actions .btn { width: 100%; margin-bottom: 8px; justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -189,7 +239,7 @@
             </div>
 
             <div id="view-dashboard" class="view-container active">
-                <div class="metric-cards" style="margin-top: 32px;">
+                <div class="metric-cards">
                     <div class="metric-card"><h3>Total Contacts</h3><div class="value" id="dash-total-contacts">0</div></div>
                     <div class="metric-card"><h3>Active Deals</h3><div class="value" id="dash-active-deals">0</div></div>
                     <div class="metric-card"><h3>Pipeline Value</h3><div class="value revenue" id="dash-pipe-val">$0</div></div>
@@ -223,7 +273,7 @@
                     <div class="avatar-lg" id="prof-avatar"></div>
                     <div>
                         <h1 id="prof-name"></h1>
-                        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px;">
+                        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 8px; justify-content: center;">
                             <span id="prof-title" style="font-size: 1.1rem; color: var(--text-muted);"></span>
                             <span class="status-badge" id="prof-status"></span>
                             <span class="deal-value-badge" id="prof-value"></span>
@@ -246,15 +296,15 @@
                     <div class="panel" style="display: flex; flex-direction: column;">
                         <h3>Activity & Job Scheduling</h3>
                         <div class="timeline-input">
-                            <select id="act-type" class="form-control" style="width: auto;">
+                            <select id="act-type" class="form-control" style="width: auto; flex-grow: 1;">
                                 <option value="job">📅 Schedule Job</option>
                                 <option value="task">✅ Task</option>
                                 <option value="note">📝 Note</option>
                                 <option value="call">📞 Call</option>
                             </select>
-                            <input type="date" id="act-date" class="form-control" style="width: 140px;">
-                            <input type="text" id="act-text" class="form-control" placeholder="Description..." style="flex: 1;">
-                            <button class="btn btn-primary" id="btn-log-act">Add</button>
+                            <input type="date" id="act-date" class="form-control" style="width: auto; flex-grow: 1;">
+                            <input type="text" id="act-text" class="form-control" placeholder="Description..." style="width: 100%; margin-top: 8px;">
+                            <button class="btn btn-primary" id="btn-log-act" style="width: 100%; margin-top: 8px;">Add Log</button>
                         </div>
                         <div id="prof-timeline" style="flex-grow: 1; overflow-y: auto;"></div>
                     </div>
@@ -332,18 +382,16 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // TO GO LIVE IN THE CLOUD: 
-        // Replace the dummy text below with your actual Firebase keys.
+        // YOUR FIREBASE KEYS ARE ACTIVE
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyDNtfKuegpo-3GAr3r36EfhCa1ynzOkA1M",
+            authDomain: "ls-crm-test.firebaseapp.com",
+            projectId: "ls-crm-test",
+            storageBucket: "ls-crm-test.firebasestorage.app",
+            messagingSenderId: "784881503676",
+            appId: "1:784881503676:web:22df7257bf0a1757282fb9"
         };
 
-        // The app will run locally on your computer until it detects real keys here.
         window.isCloudReady = firebaseConfig.apiKey !== "YOUR_API_KEY";
 
         if (window.isCloudReady) {
@@ -440,12 +488,13 @@
             setTimeout(async () => {
                 if (window.isCloudReady && window.db) {
                     try {
-                        const docSnap = await window.fbGetDoc(window.fbDoc(window.db, "crm", "master_live"));
+                        // Using a new master file to guarantee the 50 states load over previous test data
+                        const docSnap = await window.fbGetDoc(window.fbDoc(window.db, "crm", "master_live_v2"));
                         if (docSnap.exists()) { crmData = docSnap.data(); } 
-                        else { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live"), defaultData); crmData = defaultData; }
+                        else { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v2"), defaultData); crmData = defaultData; }
                     } catch(e) { console.error("Firebase read error", e); crmData = defaultData; }
                 } else {
-                    crmData = JSON.parse(localStorage.getItem('crm_pro_final_v1')) || defaultData;
+                    crmData = JSON.parse(localStorage.getItem('crm_pro_mobile_v1')) || defaultData;
                 }
                 renderTree(); updateDashboard(); renderCalendar(); switchNav('dashboard');
             }, 150);
@@ -453,10 +502,10 @@
 
         const save = async () => { 
             if (window.isCloudReady && window.db) {
-                try { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live"), crmData); } 
+                try { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v2"), crmData); } 
                 catch(e) { console.error("Firebase write error", e); }
             } else {
-                localStorage.setItem('crm_pro_final_v1', JSON.stringify(crmData)); 
+                localStorage.setItem('crm_pro_mobile_v1', JSON.stringify(crmData)); 
             }
             renderTree(); if(activeContact) loadProfile(activeContact, activeContactParentName); updateDashboard(); renderCalendar(); 
         };
@@ -472,13 +521,25 @@
         if (isDark) { document.body.setAttribute('data-theme', 'dark'); themeBtn.innerText = '☀️'; } else { document.body.removeAttribute('data-theme'); themeBtn.innerText = '🌙'; }
         themeBtn.onclick = () => { isDark = !isDark; if (isDark) { document.body.setAttribute('data-theme', 'dark'); themeBtn.innerText = '☀️'; } else { document.body.removeAttribute('data-theme'); themeBtn.innerText = '🌙'; } localStorage.setItem('theme', isDark ? 'dark' : 'light'); };
 
-        // Navigation
+        // MOBILE-READY NAVIGATION LOGIC
         function switchNav(view) {
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-' + (view === 'profile' ? 'directory' : view)).classList.add('active');
             
-            document.getElementById('list-sidebar').style.display = (view === 'dashboard' || view === 'pipeline' || view === 'calendar') ? 'none' : 'flex';
+            let activeNav = view;
+            if (view === 'profile') activeNav = 'directory'; // Highlight directory icon when in profile
+            document.getElementById('nav-' + activeNav).classList.add('active');
+            
+            // On Mobile: Hide main content and show list-sidebar FULL screen if directory is tapped
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                document.getElementById('list-sidebar').style.display = (view === 'directory') ? 'flex' : 'none';
+                document.getElementById('main-content').style.display = (view === 'directory') ? 'none' : 'flex';
+            } else {
+                document.getElementById('list-sidebar').style.display = (view === 'dashboard' || view === 'pipeline' || view === 'calendar') ? 'none' : 'flex';
+                document.getElementById('main-content').style.display = 'flex';
+            }
 
             if(view === 'dashboard') { document.getElementById('view-dashboard').classList.add('active'); document.getElementById('top-title').innerText = 'Analytics Dashboard'; updateDashboard(); } 
             else if(view === 'calendar') { document.getElementById('view-calendar').classList.add('active'); document.getElementById('top-title').innerText = 'Job Schedule'; renderCalendar(); }
@@ -486,10 +547,18 @@
             else if(view === 'profile') { document.getElementById('view-profile').classList.add('active'); document.getElementById('top-title').innerText = activeContact.name; } 
             else { document.getElementById('view-directory').classList.add('active'); document.getElementById('top-title').innerText = 'Directory'; }
         }
+        
+        // Ensure clicking directory tab properly routes back to list on mobile
         document.getElementById('nav-dashboard').onclick = () => switchNav('dashboard');
         document.getElementById('nav-calendar').onclick = () => switchNav('calendar');
-        document.getElementById('nav-directory').onclick = () => switchNav(activeContact ? 'profile' : 'directory');
+        document.getElementById('nav-directory').onclick = () => {
+            if (window.innerWidth <= 768) switchNav('directory'); 
+            else switchNav(activeContact ? 'profile' : 'directory');
+        };
         document.getElementById('nav-pipeline').onclick = () => switchNav('pipeline');
+
+        // Re-check layout if user resizes window (e.g. rotates tablet)
+        window.addEventListener('resize', () => { if(activeContact) switchNav('profile'); else switchNav('dashboard'); });
 
         // Dashboard
         function getAggregatedData() {
