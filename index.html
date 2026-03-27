@@ -3,159 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro CRM - Secure Edition</title>
+    <title>Pro CRM - Elegant Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- MODERN UI & THEME ENGINE --- */
+        /* --- ELEGANT DESIGN SYSTEM --- */
         :root {
-            --bg-base: #f8fafc; --bg-panel: #ffffff; --bg-glass: rgba(255, 255, 255, 0.85);
-            --border: #e2e8f0; --border-hover: #cbd5e1;
-            --text-main: #0f172a; --text-muted: #64748b;
-            --primary: #3b82f6; --primary-hover: #2563eb; --primary-light: #eff6ff;
-            --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --purple: #8b5cf6;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
-            --radius-md: 12px; --radius-lg: 16px; --radius-xl: 24px;
-            --transition: all 0.2s ease;
+            --bg-base: #f0f4f8; 
+            --bg-panel: #ffffff; 
+            --bg-glass: rgba(255, 255, 255, 0.7);
+            --border: rgba(226, 232, 240, 0.8); 
+            --border-hover: #cbd5e1;
+            --text-main: #0f172a; 
+            --text-muted: #64748b;
+            
+            /* Rich Gradients and Colors */
+            --primary: #4f46e5; 
+            --primary-hover: #4338ca; 
+            --primary-light: #e0e7ff;
+            --primary-gradient: linear-gradient(135deg, #4f46e5, #7c3aed);
+            
+            --success: #10b981; --success-light: #d1fae5;
+            --warning: #f59e0b; --warning-light: #fef3c7;
+            --danger: #ef4444; --danger-light: #fee2e2;
+            
+            /* Soft, diffused shadows */
+            --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04); 
+            --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.01);
+            --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.01);
+            
+            --radius-sm: 10px; --radius-md: 16px; --radius-lg: 24px; --radius-xl: 32px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Midnight Slate Dark Mode */
         [data-theme="dark"] {
-            --bg-base: #0f172a; --bg-panel: #1e293b; --bg-glass: rgba(30, 41, 59, 0.85);
-            --border: #334155; --text-main: #f8fafc; --text-muted: #94a3b8;
-            --primary: #3b82f6; --primary-light: #172554;
+            --bg-base: #0b1120; 
+            --bg-panel: #1e293b; 
+            --bg-glass: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.08); 
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8;
+            --primary-light: rgba(79, 70, 229, 0.2);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            --success-light: rgba(16, 185, 129, 0.15);
+            --warning-light: rgba(245, 158, 11, 0.15);
+            --danger-light: rgba(239, 68, 68, 0.15);
         }
 
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; height: 100vh; background-color: var(--bg-base); color: var(--text-main); -webkit-font-smoothing: antialiased; overflow: hidden; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 10px; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; height: 100vh; background-color: var(--bg-base); color: var(--text-main); -webkit-font-smoothing: antialiased; overflow: hidden; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 10px; opacity: 0.5;}
         
         /* LOGIN SCREEN OVERLAY */
         #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-base); display: flex; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; }
-        .auth-box { background: var(--bg-panel); padding: 40px; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border); width: 90%; max-width: 400px; text-align: center; }
-        .auth-box h1 { margin: 0 0 24px 0; font-size: 1.5rem; letter-spacing: -0.02em; }
-        .auth-input { width: 100%; padding: 12px 16px; margin-bottom: 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-base); color: var(--text-main); font-size: 1rem; outline: none; transition: var(--transition); }
-        .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-        .auth-btn { width: 100%; padding: 12px; border-radius: 8px; background: var(--primary); color: white; font-weight: 600; font-size: 1rem; border: none; cursor: pointer; transition: var(--transition); }
-        .auth-btn:hover { background: var(--primary-hover); }
-        #auth-error { color: var(--danger); font-size: 0.85rem; margin-top: 12px; min-height: 20px; }
+        .auth-box { background: var(--bg-panel); padding: 48px 40px; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border); width: 90%; max-width: 420px; text-align: center; backdrop-filter: blur(10px); }
+        .auth-box h1 { margin: 0 0 32px 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-input { width: 100%; padding: 14px 18px; margin-bottom: 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-base); color: var(--text-main); font-size: 1rem; font-family: inherit; outline: none; transition: var(--transition); }
+        .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+        .auth-btn { width: 100%; padding: 14px; border-radius: var(--radius-sm); background: var(--primary-gradient); color: white; font-weight: 700; font-size: 1.05rem; border: none; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4); }
+        #auth-error { color: var(--danger); font-size: 0.85rem; margin-top: 16px; min-height: 20px; font-weight: 500;}
 
         #app-container { display: none; width: 100%; height: 100%; position: relative; }
 
         /* Navigation Sidebar */
-        #nav-sidebar { width: 70px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; z-index: 50; flex-shrink: 0;}
-        .nav-item { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; transition: var(--transition); }
-        .nav-item:hover, .nav-item.active { background: var(--primary-light); color: var(--primary); }
+        #nav-sidebar { width: 80px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 24px 0; z-index: 50; flex-shrink: 0; box-shadow: var(--shadow-sm);}
+        .nav-item { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; cursor: pointer; color: var(--text-muted); font-size: 1.3rem; transition: var(--transition); }
+        .nav-item:hover { background: var(--bg-base); color: var(--primary); transform: scale(1.05); }
+        .nav-item.active { background: var(--primary-gradient); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
         .nav-spacer { flex-grow: 1; }
 
         /* User Dropdown Toggle Menu */
-        .dropdown-menu { display: none; position: absolute; left: 80px; bottom: 20px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 8px; min-width: 180px; z-index: 100; flex-direction: column; gap: 4px; }
+        .dropdown-menu { display: none; position: absolute; left: 90px; bottom: 24px; background: var(--bg-glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 12px; min-width: 200px; z-index: 100; flex-direction: column; gap: 4px; }
         .dropdown-menu.show { display: flex; animation: slideUp 0.2s ease forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .dropdown-header { padding: 8px 12px; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border); margin-bottom: 4px; letter-spacing: 0.05em;}
-        .dropdown-item { padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; color: var(--text-main); }
+        .dropdown-header { padding: 8px 12px; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border); margin-bottom: 8px; letter-spacing: 0.05em;}
+        .dropdown-item { padding: 10px 12px; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 10px; color: var(--text-main); }
         .dropdown-item:hover { background: var(--bg-base); color: var(--primary); }
         .dropdown-item.danger { color: var(--danger); }
-        .dropdown-item.danger:hover { background: rgba(239, 68, 68, 0.1); }
+        .dropdown-item.danger:hover { background: var(--danger-light); }
 
         /* Directory Tree Sidebar */
-        #list-sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: relative; z-index: 40; flex-shrink: 0;}
-        .sidebar-header { padding: 24px 24px 16px; }
-        .sidebar-header h2 { margin: 0 0 16px; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em;}
-        .search-bar { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-base); color: var(--text-main); outline: none; transition: var(--transition); }
+        #list-sidebar { width: 340px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: relative; z-index: 40; flex-shrink: 0; box-shadow: var(--shadow-sm);}
+        .sidebar-header { padding: 32px 24px 20px; }
+        .sidebar-header h2 { margin: 0 0 20px 0; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em;}
+        .search-bar { width: 100%; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-base); color: var(--text-main); font-family: inherit; font-size: 0.9rem; outline: none; transition: var(--transition); }
         .search-bar:focus { border-color: var(--primary); background: var(--bg-panel); box-shadow: 0 0 0 3px var(--primary-light); }
         
         #tree-root { flex-grow: 1; overflow-y: auto; padding: 0 16px 24px 16px; }
-        .node-container { margin-left: 14px; position: relative; border-left: 1px solid var(--border); padding-left: 8px;}
-        .node-label { display: flex; align-items: center; padding: 8px 10px; margin: 2px 0; border-radius: 8px; font-size: 0.9rem; cursor: pointer; transition: var(--transition); color: var(--text-main); font-weight: 500;}
-        .node-label:hover { background-color: var(--bg-base); color: var(--primary); }
-        .toggle-arrow { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: var(--text-muted); font-size: 0.7rem; margin-right: 4px; transition: var(--transition); }
-        .toggle-arrow:hover { background: var(--border); color: var(--text-main); }
-        .toggle-placeholder { width: 24px; margin-right: 4px; display: inline-block;}
-        .icon-box { margin-right: 10px; font-size: 1.1rem; opacity: 0.8; }
+        .node-container { margin-left: 14px; position: relative; padding-left: 12px;}
+        .node-container::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background-color: var(--border); border-radius: 2px;}
+        .node-label { display: flex; align-items: center; padding: 8px 12px; margin: 4px 0; border-radius: var(--radius-sm); font-size: 0.95rem; cursor: pointer; transition: var(--transition); color: var(--text-main); font-weight: 600;}
+        .node-label:hover { background-color: var(--bg-base); color: var(--primary); transform: translateX(4px); }
+        .toggle-arrow { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: var(--text-muted); font-size: 0.75rem; margin-right: 6px; transition: var(--transition); cursor: pointer; background: var(--bg-base);}
+        .toggle-arrow:hover { background: var(--primary-light); color: var(--primary); }
+        .toggle-placeholder { width: 28px; margin-right: 6px; }
+        .icon-box { margin-right: 12px; font-size: 1.1rem; }
+        .name-container { display: flex; align-items: center; flex-grow: 1; cursor: pointer; padding: 4px 0; }
 
         /* Main Content View */
         #main-content { flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-base); overflow: hidden; }
-        .top-bar { height: 70px; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: var(--bg-glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 30; }
-        .top-bar-title { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em;}
+        .top-bar { height: 80px; padding: 0 48px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: var(--bg-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 30; }
+        .top-bar-title { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em;}
         
-        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; transition: var(--transition); }
-        .btn-primary { background: var(--primary); color: white; box-shadow: var(--shadow-sm); }
-        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn { padding: 10px 20px; border-radius: var(--radius-sm); font-weight: 700; font-family: inherit; font-size: 0.9rem; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: var(--transition); letter-spacing: 0.02em;}
+        .btn-primary { background: var(--primary-gradient); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.35); }
         .btn-outline { background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-main); box-shadow: var(--shadow-sm); }
-        .btn-outline:hover { border-color: var(--text-muted); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
         .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid transparent; }
-        .btn-ghost:hover { background: var(--border); color: var(--text-main); }
+        .btn-ghost:hover { background: var(--bg-panel); color: var(--danger); border-color: var(--border); box-shadow: var(--shadow-sm); }
 
-        .view-container { flex-grow: 1; overflow-y: auto; padding: 40px; display: none; }
+        .view-container { flex-grow: 1; overflow-y: auto; padding: 48px; display: none; }
         .view-container.active { display: flex; flex-direction: column; }
 
         /* Dashboard */
         #view-dashboard { max-width: 1200px; margin: 0 auto; width: 100%; }
-        .metric-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 40px; }
-        .metric-card { background: var(--bg-panel); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: center;}
-        .metric-card .info-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 8px; }
-        .metric-card .value { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1;}
+        .metric-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px; margin-bottom: 48px; }
+        .metric-card { background: var(--bg-panel); padding: 32px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-md); display: flex; flex-direction: column; justify-content: center; transition: var(--transition); }
+        .metric-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
+        .metric-card .info-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 12px; }
+        .metric-card .value { font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--text-main);}
+        .value.revenue { background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
         /* Calendar */
-        #view-calendar { max-width: 1200px; margin: 0 auto; width: 100%; }
-        .cal-header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .cal-header-controls h1 { margin: 0; font-size: 1.75rem; letter-spacing: -0.02em; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
-        .cal-day-label { text-align: center; font-weight: 700; color: var(--text-muted); font-size: 0.75rem; padding: 8px 0; letter-spacing: 0.05em; }
-        .cal-day { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); min-height: 120px; padding: 10px; display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow-sm); }
+        #view-calendar { max-width: 1400px; margin: 0 auto; width: 100%; }
+        .cal-header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .cal-header-controls h1 { margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 16px; }
+        .cal-day-label { text-align: center; font-weight: 800; color: var(--text-muted); font-size: 0.8rem; padding: 12px 0; letter-spacing: 0.1em; text-transform: uppercase; }
+        .cal-day { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); min-height: 140px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow-sm); transition: var(--transition); }
+        .cal-day:hover { box-shadow: var(--shadow-md); }
         .cal-day.empty { background: transparent; border: none; box-shadow: none; }
-        .cal-day-num { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); align-self: flex-end; margin-bottom: 4px; }
+        .cal-day-num { font-size: 0.9rem; font-weight: 700; color: var(--text-muted); align-self: flex-end; margin-bottom: 4px; background: var(--bg-base); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%;}
         .cal-day.today { border: 2px solid var(--primary); background: var(--primary-light); }
-        .job-pill { background: var(--bg-base); color: var(--text-main); border: 1px solid var(--border); padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 500; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transition); }
-        .job-pill:hover { border-color: var(--primary); color: var(--primary); }
+        .cal-day.today .cal-day-num { background: var(--primary); color: white; }
+        .job-pill { background: var(--bg-base); color: var(--text-main); border: 1px solid var(--border); padding: 8px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transition); }
+        .job-pill:hover { border-color: var(--primary); color: var(--primary); transform: translateX(2px); }
 
         /* Asymmetrical Profile Layout */
-        .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap;}
-        .avatar-lg { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: white; background: var(--primary); }
-        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .profile-header { display: flex; align-items: center; gap: 32px; margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--border); flex-wrap: wrap;}
+        .avatar-lg { width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: white; background: var(--primary-gradient); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2); }
+        .status-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
         
-        .content-grid { display: grid; grid-template-columns: 320px 1fr; gap: 32px; align-items: start; }
+        .content-grid { display: grid; grid-template-columns: 350px 1fr; gap: 40px; align-items: start; max-width: 1400px; }
         
-        .panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
-        .panel h3 { margin: 0 0 20px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+        .panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-md); }
+        .panel h3 { margin: 0 0 24px 0; font-size: 1.05rem; color: var(--text-main); letter-spacing: -0.01em; font-weight: 800; display: flex; align-items: center; gap: 8px;}
         
-        .info-row { margin-bottom: 16px; }
-        .info-row:last-child { margin-bottom: 0; }
-        .info-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600; letter-spacing: 0.05em;}
-        .info-val { font-size: 0.95rem; color: var(--text-main); word-wrap: break-word; }
+        .info-row { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px dashed var(--border);}
+        .info-row:last-child { margin-bottom: 0; padding-bottom: 0; border: none;}
+        .info-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.05em;}
+        .info-val { font-size: 1.05rem; color: var(--text-main); font-weight: 600; word-wrap: break-word; }
 
-        /* Timeline & Notes */
-        .timeline-input { display: flex; gap: 12px; margin-bottom: 24px; background: var(--bg-base); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border); align-items: center; flex-wrap: wrap;}
-        .form-control { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-panel); color: var(--text-main); font-size: 0.9rem; font-family: inherit; outline: none; transition: var(--transition); }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        /* Sleek Timeline & Notes */
+        .timeline-input { display: flex; gap: 16px; margin-bottom: 32px; background: var(--bg-panel); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border); align-items: center; flex-wrap: wrap; box-shadow: var(--shadow-sm);}
+        .form-control { width: 100%; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-base); color: var(--text-main); font-size: 0.95rem; font-family: inherit; font-weight: 500; outline: none; transition: var(--transition); }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); background: var(--bg-panel); }
         
-        textarea.form-control { resize: vertical; min-height: 80px; }
+        textarea.form-control { resize: vertical; min-height: 100px; line-height: 1.5; }
         
-        .tl-item { position: relative; padding-left: 24px; margin-bottom: 24px; }
-        .tl-item::before { content: ''; position: absolute; left: 0; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
-        .tl-item::after { content: ''; position: absolute; left: 4px; top: 20px; bottom: -24px; width: 2px; background: var(--border); }
+        .tl-item { position: relative; padding-left: 32px; margin-bottom: 32px; }
+        .tl-item::before { content: ''; position: absolute; left: 0; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+        .tl-item::after { content: ''; position: absolute; left: 5px; top: 24px; bottom: -32px; width: 2px; background: var(--border); }
         .tl-item:last-child::after { display: none; }
         
-        .tl-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.8rem; color: var(--text-muted); }
-        .tl-type { font-weight: 700; text-transform: uppercase; color: var(--text-main); letter-spacing: 0.05em; }
-        .tl-text { font-size: 0.95rem; line-height: 1.5; color: var(--text-main); background: var(--bg-panel); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
+        .tl-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .tl-type { font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.05em; }
+        .tl-text { font-size: 1rem; line-height: 1.6; color: var(--text-main); background: var(--bg-base); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius-md); font-weight: 500; }
 
         /* Kanban / Pipeline */
-        #pipeline-view { display: flex; gap: 24px; overflow-x: auto; padding-bottom: 20px; height: 100%; }
-        .kanban-col { flex: 0 0 340px; display: flex; flex-direction: column; background: var(--bg-base); border-radius: var(--radius-lg); padding: 16px; border: 1px solid var(--border); }
-        .kanban-header { padding-bottom: 16px; margin-bottom: 16px; border-bottom: 2px solid var(--border); font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
-        .kanban-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; min-height: 100px; }
-        .kanban-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; cursor: grab; box-shadow: var(--shadow-sm); transition: var(--transition); border-left: 4px solid var(--border); }
-        .kanban-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-left-color: var(--primary); }
-        .kanban-card h4 { margin: 0 0 4px 0; font-size: 0.95rem; }
-        .kanban-card p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
-        .kanban-val { margin-top: 12px; font-weight: 700; color: var(--success); font-size: 0.85rem; }
+        #pipeline-view { display: flex; gap: 32px; overflow-x: auto; padding-bottom: 20px; height: 100%; }
+        .kanban-col { flex: 0 0 360px; display: flex; flex-direction: column; background: transparent; }
+        .kanban-header { padding: 16px 20px; margin-bottom: 16px; border-radius: var(--radius-md); background: var(--bg-panel); border: 1px solid var(--border); font-weight: 800; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); }
+        .kanban-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; min-height: 100px; }
+        .kanban-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; cursor: grab; box-shadow: var(--shadow-sm); transition: var(--transition); position: relative; overflow: hidden; }
+        .kanban-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--border); transition: var(--transition); }
+        .kanban-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--primary-light); }
+        .kanban-card:hover::before { background: var(--primary); }
+        .kanban-card h4 { margin: 0 0 6px 0; font-size: 1.05rem; font-weight: 700; }
+        .kanban-card p { margin: 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .kanban-val { margin-top: 16px; font-weight: 800; color: var(--success); font-size: 1rem; }
 
         /* Modal Popup */
-        #modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; }
-        .modal-content { background: var(--bg-panel); width: 95%; max-width: 500px; border-radius: var(--radius-xl); padding: 32px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border: 1px solid var(--border); }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 6px; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        #modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: center; justify-content: center; }
+        .modal-content { background: var(--bg-panel); width: 95%; max-width: 550px; border-radius: var(--radius-xl); padding: 40px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
+        .form-group { margin-bottom: 24px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
-        #cloud-status { position: fixed; bottom: 20px; right: 20px; font-size: 0.75rem; color: var(--text-muted); background: var(--bg-panel); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); z-index: 99; font-weight: 500; box-shadow: var(--shadow-sm);}
+        #cloud-status { position: fixed; bottom: 24px; right: 24px; font-size: 0.8rem; color: var(--text-main); background: var(--bg-glass); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); z-index: 99; font-weight: 600; box-shadow: var(--shadow-md);}
 
         /* =======================================================
            📱 MOBILE REPAIRS
@@ -165,14 +201,14 @@
             #list-sidebar { width: 100%; height: calc(100vh - 70px); position: absolute; top: 0; left: 0; z-index: 45; display: none; }
             #main-content { width: 100%; height: calc(100vh - 70px); margin-bottom: 70px; }
             .content-grid { grid-template-columns: 1fr; gap: 24px; }
-            .profile-header { flex-direction: column; text-align: center; gap: 16px;}
-            #profile-actions { justify-content: center; width: 100%; }
-            .top-bar { padding: 0 20px; }
+            .profile-header { flex-direction: column; text-align: center; gap: 20px;}
+            #profile-actions { justify-content: center; width: 100%; flex-wrap: wrap; }
+            .top-bar { padding: 0 24px; }
             #btn-export-csv { display: none; }
-            .view-container { padding: 20px; padding-bottom: 100px;}
-            #cloud-status { bottom: 85px; }
-            /* Mobile adjustments for dropdown */
+            .view-container { padding: 24px; padding-bottom: 100px;}
+            #cloud-status { bottom: 90px; }
             .dropdown-menu { left: auto; right: 10px; bottom: 80px; }
+            .metric-card .value { font-size: 2rem; }
         }
     </style>
 </head>
@@ -180,7 +216,7 @@
 
     <div id="auth-overlay">
         <div class="auth-box">
-            <h1>Pro CRM Login</h1>
+            <h1>Pro CRM</h1>
             <form id="auth-form">
                 <input type="email" id="auth-email" class="auth-input" placeholder="Email Address" required>
                 <input type="password" id="auth-password" class="auth-input" placeholder="Password" required>
@@ -203,8 +239,8 @@
                 <div id="user-dropdown" class="dropdown-menu">
                     <div class="dropdown-header">System</div>
                     <div class="dropdown-item" id="btn-my-profile">👤 My Profile</div>
-                    <div class="dropdown-item" id="btn-theme">☀️ Toggle Theme</div>
-                    <div class="dropdown-header" style="margin-top:8px;">Session</div>
+                    <div class="dropdown-item" id="btn-theme">☀️ Light Mode</div>
+                    <div class="dropdown-header" style="margin-top:12px;">Session</div>
                     <div class="dropdown-item danger" id="btn-logout">🚪 Log Out</div>
                 </div>
             </div>
@@ -231,25 +267,25 @@
                 <div class="metric-cards">
                     <div class="metric-card"><div class="info-label">Total Records</div><div class="value" id="dash-total">0</div></div>
                     <div class="metric-card"><div class="info-label">Active Deals</div><div class="value" id="dash-active">0</div></div>
-                    <div class="metric-card"><div class="info-label">Pipeline Value</div><div class="value" id="dash-pipe-val" style="color:var(--success)">$0</div></div>
+                    <div class="metric-card"><div class="info-label">Pipeline Value</div><div class="value revenue" id="dash-pipe-val">$0</div></div>
                 </div>
             </div>
 
             <div id="view-calendar" class="view-container">
                 <div class="cal-header-controls">
                     <h1 id="cal-month-title">Month</h1>
-                    <div><button class="btn btn-outline" onclick="changeMonth(-1)">◀</button> <button class="btn btn-outline" onclick="changeMonth(1)">▶</button></div>
+                    <div style="display:flex; gap:8px;"><button class="btn btn-outline" onclick="changeMonth(-1)">◀</button> <button class="btn btn-outline" onclick="changeMonth(1)">▶</button></div>
                 </div>
                 <div class="calendar-grid"><div class="cal-day-label">SUN</div><div class="cal-day-label">MON</div><div class="cal-day-label">TUE</div><div class="cal-day-label">WED</div><div class="cal-day-label">THU</div><div class="cal-day-label">FRI</div><div class="cal-day-label">SAT</div></div>
                 <div class="calendar-grid" id="cal-grid"></div>
             </div>
             
             <div id="view-user" class="view-container">
-                <div class="profile-header" style="border-bottom: none; margin-bottom: 10px;">
-                    <div class="avatar-lg" id="user-avatar" style="background:var(--purple);">👤</div>
+                <div class="profile-header" style="border-bottom: none; margin-bottom: 20px;">
+                    <div class="avatar-lg" id="user-avatar">👤</div>
                     <div style="flex-grow:1;">
-                        <h1 id="user-name-display" style="margin:0 0 8px 0; font-size: 2.2rem; letter-spacing: -0.02em;">Admin User</h1>
-                        <div style="color:var(--text-muted); font-weight: 500;" id="user-email-display">user@email.com</div>
+                        <h1 id="user-name-display" style="margin:0 0 8px 0; font-size: 2.2rem; font-weight:800; letter-spacing: -0.02em;">Admin User</h1>
+                        <div style="color:var(--text-muted); font-weight: 600; font-size:1.1rem;" id="user-email-display">user@email.com</div>
                     </div>
                 </div>
                 <div class="content-grid" style="grid-template-columns: 1fr; max-width: 600px;">
@@ -260,7 +296,7 @@
                             <input type="text" id="user-display-name" class="form-control" placeholder="Enter your name">
                         </div>
                         <button class="btn btn-primary" id="btn-save-user">Save Profile</button>
-                        <div id="user-save-status" style="margin-top: 10px; font-size: 0.85rem; color: var(--success);"></div>
+                        <div id="user-save-status" style="margin-top: 16px; font-size: 0.9rem; font-weight:600; color: var(--success);"></div>
                     </div>
                 </div>
             </div>
@@ -269,27 +305,27 @@
                 <div class="profile-header">
                     <div class="avatar-lg" id="prof-avatar"></div>
                     <div style="flex-grow:1;">
-                        <h1 id="prof-name" style="margin:0 0 8px 0; font-size: 2.2rem; letter-spacing: -0.02em;">Name</h1>
-                        <div style="display:flex; gap:12px; align-items: center;">
+                        <h1 id="prof-name" style="margin:0 0 8px 0; font-size: 2.2rem; font-weight:800; letter-spacing: -0.02em;">Name</h1>
+                        <div style="display:flex; gap:16px; align-items: center;">
                             <span class="status-badge" id="prof-status" style="background:var(--primary-light); color:var(--primary);">STATUS</span>
-                            <span id="prof-value" style="font-weight:700; color:var(--success); font-size: 1.1rem;">$0</span>
+                            <span id="prof-value" style="font-weight:800; color:var(--success); font-size: 1.2rem;">$0</span>
                         </div>
                     </div>
-                    <div id="profile-actions" style="display:flex; gap:8px;">
+                    <div id="profile-actions" style="display:flex; gap:12px;">
                         <button class="btn btn-outline" id="btn-add-sub">➕ Add Sub</button>
                         <button class="btn btn-outline" id="btn-edit-profile">✏️ Edit</button>
-                        <button class="btn btn-ghost" id="btn-delete-profile" style="color: var(--danger);">🗑️ Delete</button>
+                        <button class="btn btn-ghost" id="btn-delete-profile">🗑️ Delete</button>
                     </div>
                 </div>
                 
                 <div class="content-grid">
-                    <div style="display:flex; flex-direction:column; gap:24px;">
+                    <div style="display:flex; flex-direction:column; gap:32px;">
                         <div class="panel">
                             <h3>About</h3>
                             <div class="info-row"><div class="info-label">Title / Role</div><div class="info-val" id="disp-title"></div></div>
                             <div class="info-row"><div class="info-label">Email</div><div class="info-val" id="disp-email"></div></div>
                             <div class="info-row"><div class="info-label">Phone</div><div class="info-val" id="disp-phone"></div></div>
-                            <div class="info-row" style="border:none; padding-bottom:0;"><div class="info-label">Parent Account</div><div class="info-val" id="disp-parent" style="color:var(--primary); font-weight:500;"></div></div>
+                            <div class="info-row" style="border:none; padding-bottom:0;"><div class="info-label">Parent Account</div><div class="info-val" id="disp-parent" style="color:var(--primary); font-weight:700;"></div></div>
                         </div>
                         <div class="panel" id="custom-fields-panel" style="display:none;">
                             <h3>Custom Attributes</h3>
@@ -297,22 +333,22 @@
                         </div>
                     </div>
                     
-                    <div style="display:flex; flex-direction:column; gap:24px;">
+                    <div style="display:flex; flex-direction:column; gap:32px;">
                         <div class="panel">
                             <h3>General Notes</h3>
-                            <textarea id="prof-notes" class="form-control" rows="4" placeholder="Enter persistent notes about this account or folder..."></textarea>
-                            <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+                            <textarea id="prof-notes" class="form-control" placeholder="Enter persistent notes about this account or folder..."></textarea>
+                            <div style="display:flex; justify-content:flex-end; margin-top:16px;">
                                 <button class="btn btn-outline" id="btn-save-notes">💾 Save Notes</button>
                             </div>
                         </div>
 
                         <div class="panel" style="background:transparent; border:none; padding:0; box-shadow:none;">
-                            <h3>Activity Feed</h3>
+                            <h3 style="margin-bottom:24px;">Activity Feed</h3>
                             <div class="timeline-input">
-                                <select id="act-type" class="form-control" style="width: auto; min-width: 100px; border-color:transparent; font-weight:600; background:var(--bg-base); cursor:pointer;"><option value="job">📅 Job</option><option value="note">📝 Note</option><option value="call">📞 Call</option></select>
-                                <input type="date" id="act-date" class="form-control" style="width: auto; border-color:transparent; background:var(--bg-base); cursor:pointer;">
-                                <input type="text" id="act-text" class="form-control" placeholder="Write a description or detail..." style="flex:1; border-color:transparent;">
-                                <button class="btn btn-primary" id="btn-log-act">Add</button>
+                                <select id="act-type" class="form-control" style="width: auto; min-width: 120px; font-weight:700; cursor:pointer;"><option value="job">📅 Job</option><option value="note">📝 Note</option><option value="call">📞 Call</option></select>
+                                <input type="date" id="act-date" class="form-control" style="width: auto; cursor:pointer; font-weight:600;">
+                                <input type="text" id="act-text" class="form-control" placeholder="Write a description or detail..." style="flex:1;">
+                                <button class="btn btn-primary" id="btn-log-act">Save</button>
                             </div>
                             <div id="prof-timeline"></div>
                         </div>
@@ -322,7 +358,7 @@
 
             <div id="view-pipeline" class="view-container">
                 <div id="pipeline-view">
-                    <div class="kanban-col"><div class="kanban-header"><div>Discovery</div> <span id="rev-lead" style="color:var(--text-muted); font-weight:500;"></span></div><div class="kanban-body" id="col-lead" ondragover="event.preventDefault()" ondrop="dropKanban(event, 'Lead')"></div></div>
+                    <div class="kanban-col"><div class="kanban-header"><div>Discovery</div> <span id="rev-lead" style="color:var(--text-muted); font-weight:600;"></span></div><div class="kanban-body" id="col-lead" ondragover="event.preventDefault()" ondrop="dropKanban(event, 'Lead')"></div></div>
                     <div class="kanban-col"><div class="kanban-header"><div>Active Deals</div> <span id="rev-active" style="color:var(--primary);"></span></div><div class="kanban-body" id="col-active" ondragover="event.preventDefault()" ondrop="dropKanban(event, 'Active')"></div></div>
                     <div class="kanban-col"><div class="kanban-header"><div>Closed Won</div> <span id="rev-closed" style="color:var(--success);"></span></div><div class="kanban-body" id="col-closed" ondragover="event.preventDefault()" ondrop="dropKanban(event, 'Closed')"></div></div>
                 </div>
@@ -332,35 +368,35 @@
 
     <div id="modal-overlay">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top:0; font-size:1.5rem;">Edit Entry</h2>
+            <h2 id="modal-title" style="margin-top:0; font-size:1.5rem; font-weight:800; letter-spacing:-0.02em;">Edit Entry</h2>
             <form id="entry-form">
-                <div style="display:flex; gap:16px;">
+                <div style="display:flex; gap:20px;">
                     <div class="form-group" id="modal-type-group" style="flex:1;"><label>Type</label><select id="modal-type" class="form-control"><option value="location">📂 Folder</option><option value="company">🏢 Company</option><option value="contact">👤 Contact</option></select></div>
                     <div class="form-group" id="modal-parent-group" style="flex:2;"><label>Move Under Parent</label><select id="modal-parent" class="form-control"></select></div>
                 </div>
                 <div class="form-group"><label>Account / Person Name</label><input type="text" id="modal-name" class="form-control" required></div>
-                <div style="display:flex; gap:16px;">
+                <div style="display:flex; gap:20px;">
                     <div class="form-group" style="flex:1;"><label>Pipeline Status</label><select id="modal-status" class="form-control"><option value="Lead">Discovery</option><option value="Active">Active Deal</option><option value="Closed">Closed Won</option></select></div>
                     <div class="form-group" style="flex:1;"><label>Deal Value ($)</label><input type="number" id="modal-value" class="form-control"></div>
                 </div>
                 <div class="form-group"><label>Role / Title</label><input type="text" id="modal-title-input" class="form-control"></div>
-                <div style="display:flex; gap:16px;">
+                <div style="display:flex; gap:20px;">
                     <div class="form-group" style="flex:1;"><label>Phone</label><input type="text" id="modal-phone" class="form-control"></div>
                     <div class="form-group" style="flex:1;"><label>Email</label><input type="email" id="modal-email" class="form-control"></div>
                 </div>
-                <div class="form-group" style="margin-top:8px;">
-                    <label style="display:flex; justify-content:space-between; align-items:center;">Custom Attributes <span style="color:var(--primary); cursor:pointer;" onclick="addCustomFieldRow()">+ Add</span></label>
+                <div class="form-group" style="margin-top:12px; border-top: 1px solid var(--border); padding-top: 24px;">
+                    <label style="display:flex; justify-content:space-between; align-items:center;">Custom Attributes <span style="color:var(--primary); cursor:pointer; font-weight:700;" onclick="addCustomFieldRow()">+ Add Row</span></label>
                     <div id="custom-fields-editor"></div>
                 </div>
-                <div class="modal-actions" style="display:flex; gap:12px; margin-top:32px;">
-                    <button type="button" class="btn btn-ghost" style="flex:1" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="flex:2">Save Entry</button>
+                <div class="modal-actions" style="display:flex; gap:16px; margin-top:40px;">
+                    <button type="button" class="btn btn-outline" style="flex:1; justify-content:center;" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex:2; justify-content:center; font-size:1.05rem;">Save Entry</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="cloud-status">🔒 Checking Authentication...</div>
+    <div id="cloud-status">🔒 Auth Check...</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -392,7 +428,7 @@
                 if (user) {
                     authOverlay.style.display = 'none';
                     appContainer.style.display = 'flex';
-                    cloudStatus.innerText = '☁️ Secure Cloud Sync';
+                    cloudStatus.innerText = '☁️ Secured';
                     
                     // Populate User Profile Data
                     document.getElementById('user-email-display').innerText = user.email;
@@ -404,7 +440,7 @@
                 } else {
                     authOverlay.style.display = 'flex';
                     appContainer.style.display = 'none';
-                    cloudStatus.innerText = '🔒 Please Login';
+                    cloudStatus.innerText = '🔒 Login';
                 }
             });
 
@@ -470,7 +506,7 @@
 
         window.initCRMData = async () => {
             try {
-                // Kept at v4 to preserve your live test data!
+                // Pointed to v4 to preserve data
                 const docSnap = await window.fbGetDoc(window.fbDoc(window.db, "crm", "master_live_v4"));
                 if (docSnap.exists()) { crmData = docSnap.data(); } 
                 else { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v4"), defaultData); crmData = defaultData; }
@@ -482,22 +518,21 @@
 
         const save = async () => { 
             try { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v4"), crmData); } catch(e) {}
-            // Only re-render the Kanban and Dashboard in the background so we don't interrupt the user
             updateDashboard(); renderKanban();
         };
 
         const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num || 0);
-        const getColor = (n) => ['#ef4444', '#f97316', '#10b981', '#06b6d4', '#6366f1'][Math.abs([...n].reduce((a,b)=>a+b.charCodeAt(0),0)) % 5];
+        const getColor = (n) => ['#ef4444', '#f97316', '#10b981', '#0ea5e9', '#6366f1', '#d946ef', '#f43f5e'][Math.abs([...n].reduce((a,b)=>a+b.charCodeAt(0),0)) % 7];
         const getInitials = (n) => n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
 
         // Theme Engine
         const themeBtn = document.getElementById('btn-theme');
         let isDark = localStorage.getItem('theme') !== 'light'; 
-        if (isDark) { document.body.setAttribute('data-theme', 'dark'); themeBtn.innerText = '☀️ Toggle Light Mode'; } else { document.body.removeAttribute('data-theme'); themeBtn.innerText = '🌙 Toggle Dark Mode'; }
+        if (isDark) { document.body.setAttribute('data-theme', 'dark'); themeBtn.innerText = '☀️ Light Mode'; } else { document.body.removeAttribute('data-theme'); themeBtn.innerText = '🌙 Dark Mode'; }
         themeBtn.onclick = () => { 
             isDark = !isDark; 
-            if (isDark) { document.body.setAttribute('data-theme', 'dark'); themeBtn.innerText = '☀️ Toggle Light Mode'; } 
-            else { document.body.removeAttribute('data-theme'); themeBtn.innerText = '🌙 Toggle Dark Mode'; } 
+            if (isDark) { document.body.setAttribute('data-theme', 'dark'); themeBtn.innerText = '☀️ Light Mode'; } 
+            else { document.body.removeAttribute('data-theme'); themeBtn.innerText = '🌙 Dark Mode'; } 
             localStorage.setItem('theme', isDark ? 'dark' : 'light'); 
             document.getElementById('user-dropdown').classList.remove('show');
         };
@@ -522,7 +557,6 @@
             const container = document.getElementById('view-' + (view === 'directory' ? 'dashboard' : view));
             if(container) container.classList.add('active');
             
-            // Handle Top Bar visibility
             const topBarActions = document.getElementById('top-bar-actions-container');
             if(view === 'user') {
                 document.getElementById('top-title').innerText = "My Profile";
@@ -544,10 +578,11 @@
         document.getElementById('btn-my-profile').onclick = () => { switchNav('user'); document.getElementById('user-dropdown').classList.remove('show'); };
 
         // ==========================================
-        // TREE RENDERING (Properly Fixed)
+        // REPAIRED TREE ENGINE (Clickable Arrows)
         // ==========================================
         function renderTree() {
             const root = document.getElementById('tree-root'); root.innerHTML = '';
+            
             const renderNode = (node, parentEl, parentName) => {
                 if(searchQuery && !node.name.toLowerCase().includes(searchQuery)) return false;
                 
@@ -557,21 +592,22 @@
                 const label = document.createElement('div'); 
                 label.className = `node-label`;
                 
+                // ARROW (Live button)
                 const arrow = document.createElement('span');
                 if (node.type === 'location' || node.type === 'company' || (node.children && node.children.length > 0)) {
                     arrow.className = 'toggle-arrow'; 
-                    arrow.innerHTML = node.isOpen ? '▼' : '▶';
-                    // The completely safe click listener
+                    arrow.innerText = node.isOpen ? '▼' : '▶';
                     arrow.onclick = (e) => { 
                         e.stopPropagation(); 
                         node.isOpen = !node.isOpen; 
-                        renderTree(); 
-                        save(); 
+                        renderTree(); // Instantly visually update
+                        save();       // Silently save in background
                     };
                 } else { 
                     arrow.className = 'toggle-placeholder'; 
                 }
                 
+                // NAME & ICON
                 const contentGroup = document.createElement('div');
                 contentGroup.className = 'name-container';
                 let icon = node.type === 'location' ? '📂' : node.type === 'company' ? '🏢' : '👤';
@@ -581,7 +617,7 @@
                     loadProfile(node, parentName);
                 }
 
-                // Append safely as objects
+                // Safely append items
                 label.appendChild(arrow);
                 label.appendChild(contentGroup);
                 nodeDiv.appendChild(label);
@@ -593,6 +629,7 @@
                 }
                 parentEl.appendChild(nodeDiv); return true;
             };
+            
             renderNode(crmData, root, 'Root');
         }
 
@@ -613,8 +650,7 @@
             
             let icon = node.type === 'location' ? '📂' : node.type === 'company' ? '🏢' : getInitials(node.name);
             document.getElementById('prof-avatar').innerText = icon;
-            document.getElementById('prof-avatar').style.background = (node.type === 'contact') ? getColor(node.name) : 'var(--primary-light)';
-            document.getElementById('prof-avatar').style.color = (node.type === 'contact') ? 'white' : 'var(--primary)';
+            document.getElementById('prof-avatar').style.background = (node.type === 'contact') ? getColor(node.name) : 'var(--primary-gradient)';
             
             const cfPanel = document.getElementById('custom-fields-panel');
             const cfContainer = document.getElementById('prof-custom-fields'); cfContainer.innerHTML = '';
@@ -666,7 +702,7 @@
 
         window.addCustomFieldRow = (k="", v="") => {
             const container = document.getElementById('custom-fields-editor'); const id = 'cf_'+Math.random();
-            const div = document.createElement('div'); div.id = id; div.style.display = 'flex'; div.style.gap = '8px'; div.style.marginBottom = '8px';
+            const div = document.createElement('div'); div.id = id; div.style.display = 'flex'; div.style.gap = '12px'; div.style.marginBottom = '12px';
             div.innerHTML = `<input type="text" class="form-control cf-key" placeholder="Field Name" value="${k}"><input type="text" class="form-control cf-val" placeholder="Value" value="${v}"><button type="button" class="btn-ghost" onclick="document.getElementById('${id}').remove()">×</button>`;
             container.appendChild(div);
         };
