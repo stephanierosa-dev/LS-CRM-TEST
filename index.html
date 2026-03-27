@@ -46,12 +46,12 @@
         .nav-spacer { flex-grow: 1; }
 
         /* User Dropdown Toggle Menu */
-        .dropdown-menu { display: none; position: absolute; left: 80px; bottom: 20px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 8px; min-width: 160px; z-index: 100; flex-direction: column; gap: 4px; }
+        .dropdown-menu { display: none; position: absolute; left: 80px; bottom: 20px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 8px; min-width: 180px; z-index: 100; flex-direction: column; gap: 4px; }
         .dropdown-menu.show { display: flex; animation: slideUp 0.2s ease forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .dropdown-header { padding: 8px 12px; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border); margin-bottom: 4px; letter-spacing: 0.05em;}
         .dropdown-item { padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; color: var(--text-main); }
-        .dropdown-item:hover { background: var(--bg-base); }
+        .dropdown-item:hover { background: var(--bg-base); color: var(--primary); }
         .dropdown-item.danger { color: var(--danger); }
         .dropdown-item.danger:hover { background: rgba(239, 68, 68, 0.1); }
 
@@ -64,13 +64,12 @@
         
         #tree-root { flex-grow: 1; overflow-y: auto; padding: 0 16px 24px 16px; }
         .node-container { margin-left: 14px; position: relative; border-left: 1px solid var(--border); padding-left: 8px;}
-        .node-label { display: flex; align-items: center; padding: 4px 6px; margin: 2px 0; border-radius: 8px; font-size: 0.9rem; transition: var(--transition); color: var(--text-main); font-weight: 500;}
+        .node-label { display: flex; align-items: center; padding: 8px 10px; margin: 2px 0; border-radius: 8px; font-size: 0.9rem; cursor: pointer; transition: var(--transition); color: var(--text-main); font-weight: 500;}
         .node-label:hover { background-color: var(--bg-base); color: var(--primary); }
-        .toggle-arrow { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; color: var(--text-muted); font-size: 0.75rem; margin-right: 4px; transition: var(--transition); cursor: pointer; }
+        .toggle-arrow { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: var(--text-muted); font-size: 0.7rem; margin-right: 4px; transition: var(--transition); }
         .toggle-arrow:hover { background: var(--border); color: var(--text-main); }
-        .toggle-placeholder { width: 28px; margin-right: 4px; }
+        .toggle-placeholder { width: 24px; margin-right: 4px; display: inline-block;}
         .icon-box { margin-right: 10px; font-size: 1.1rem; opacity: 0.8; }
-        .name-container { display: flex; align-items: center; flex-grow: 1; cursor: pointer; padding: 4px 0; }
 
         /* Main Content View */
         #main-content { flex-grow: 1; display: flex; flex-direction: column; background: var(--bg-base); overflow: hidden; }
@@ -108,7 +107,7 @@
         .job-pill { background: var(--bg-base); color: var(--text-main); border: 1px solid var(--border); padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 500; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transition); }
         .job-pill:hover { border-color: var(--primary); color: var(--primary); }
 
-        /* Profile Layout */
+        /* Asymmetrical Profile Layout */
         .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap;}
         .avatar-lg { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: white; background: var(--primary); }
         .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -198,12 +197,14 @@
             <div class="nav-item" id="nav-directory" title="Directory">📁</div>
             <div class="nav-item" id="nav-pipeline" title="Pipeline">📊</div>
             <div class="nav-spacer"></div>
-            <div class="nav-item" id="btn-theme" title="Toggle Theme">☀️</div>
             
             <div style="position: relative;" id="user-menu-container">
                 <div class="nav-item" id="btn-user-toggle" title="Settings & Account">⚙️</div>
                 <div id="user-dropdown" class="dropdown-menu">
-                    <div class="dropdown-header">Account</div>
+                    <div class="dropdown-header">System</div>
+                    <div class="dropdown-item" id="btn-my-profile">👤 My Profile</div>
+                    <div class="dropdown-item" id="btn-theme">☀️ Toggle Theme</div>
+                    <div class="dropdown-header" style="margin-top:8px;">Session</div>
                     <div class="dropdown-item danger" id="btn-logout">🚪 Log Out</div>
                 </div>
             </div>
@@ -220,7 +221,7 @@
         <div id="main-content">
             <div class="top-bar">
                 <div class="top-bar-title" id="top-title">Dashboard</div>
-                <div class="top-bar-actions">
+                <div class="top-bar-actions" id="top-bar-actions-container">
                     <button class="btn btn-ghost" id="btn-export-csv">Export CSV</button>
                     <button class="btn btn-primary" id="btn-add-global">➕ Add Entry</button>
                 </div>
@@ -241,6 +242,27 @@
                 </div>
                 <div class="calendar-grid"><div class="cal-day-label">SUN</div><div class="cal-day-label">MON</div><div class="cal-day-label">TUE</div><div class="cal-day-label">WED</div><div class="cal-day-label">THU</div><div class="cal-day-label">FRI</div><div class="cal-day-label">SAT</div></div>
                 <div class="calendar-grid" id="cal-grid"></div>
+            </div>
+            
+            <div id="view-user" class="view-container">
+                <div class="profile-header" style="border-bottom: none; margin-bottom: 10px;">
+                    <div class="avatar-lg" id="user-avatar" style="background:var(--purple);">👤</div>
+                    <div style="flex-grow:1;">
+                        <h1 id="user-name-display" style="margin:0 0 8px 0; font-size: 2.2rem; letter-spacing: -0.02em;">Admin User</h1>
+                        <div style="color:var(--text-muted); font-weight: 500;" id="user-email-display">user@email.com</div>
+                    </div>
+                </div>
+                <div class="content-grid" style="grid-template-columns: 1fr; max-width: 600px;">
+                    <div class="panel">
+                        <h3>Account Settings</h3>
+                        <div class="form-group">
+                            <label>Display Name</label>
+                            <input type="text" id="user-display-name" class="form-control" placeholder="Enter your name">
+                        </div>
+                        <button class="btn btn-primary" id="btn-save-user">Save Profile</button>
+                        <div id="user-save-status" style="margin-top: 10px; font-size: 0.85rem; color: var(--success);"></div>
+                    </div>
+                </div>
             </div>
 
             <div id="view-profile" class="view-container">
@@ -343,7 +365,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDNtfKuegpo-3GAr3r36EfhCa1ynzOkA1M",
@@ -371,6 +393,13 @@
                     authOverlay.style.display = 'none';
                     appContainer.style.display = 'flex';
                     cloudStatus.innerText = '☁️ Secure Cloud Sync';
+                    
+                    // Populate User Profile Data
+                    document.getElementById('user-email-display').innerText = user.email;
+                    document.getElementById('user-name-display').innerText = user.displayName || 'Admin User';
+                    document.getElementById('user-display-name').value = user.displayName || '';
+                    if(user.displayName) document.getElementById('user-avatar').innerText = user.displayName.substring(0,2).toUpperCase();
+
                     window.initCRMData(); 
                 } else {
                     authOverlay.style.display = 'flex';
@@ -391,7 +420,7 @@
                 });
             });
 
-            // NEW: User Toggle Menu Logic
+            // User Toggle Menu Logic
             const userToggle = document.getElementById('btn-user-toggle');
             const userDropdown = document.getElementById('user-dropdown');
             
@@ -402,6 +431,22 @@
             
             document.addEventListener('click', () => {
                 userDropdown.classList.remove('show');
+            });
+
+            // Save User Profile
+            document.getElementById('btn-save-user').addEventListener('click', () => {
+                const newName = document.getElementById('user-display-name').value;
+                const statusDiv = document.getElementById('user-save-status');
+                statusDiv.innerText = "Saving...";
+                updateProfile(auth.currentUser, { displayName: newName }).then(() => {
+                    document.getElementById('user-name-display').innerText = newName || 'Admin User';
+                    if(newName) document.getElementById('user-avatar').innerText = newName.substring(0,2).toUpperCase();
+                    statusDiv.innerText = "Profile updated successfully!";
+                    setTimeout(() => statusDiv.innerText = "", 3000);
+                }).catch((error) => {
+                    statusDiv.style.color = "var(--danger)";
+                    statusDiv.innerText = "Failed to update profile.";
+                });
             });
 
             document.getElementById('btn-logout').addEventListener('click', () => {
@@ -442,27 +487,51 @@
         };
 
         const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num || 0);
+        const getColor = (n) => ['#ef4444', '#f97316', '#10b981', '#06b6d4', '#6366f1'][Math.abs([...n].reduce((a,b)=>a+b.charCodeAt(0),0)) % 5];
+        const getInitials = (n) => n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+
+        // Theme Engine
+        const themeBtn = document.getElementById('btn-theme');
+        let isDark = localStorage.getItem('theme') !== 'light'; 
+        if (isDark) { document.body.setAttribute('data-theme', 'dark'); themeBtn.innerText = '☀️ Toggle Light Mode'; } else { document.body.removeAttribute('data-theme'); themeBtn.innerText = '🌙 Toggle Dark Mode'; }
+        themeBtn.onclick = () => { 
+            isDark = !isDark; 
+            if (isDark) { document.body.setAttribute('data-theme', 'dark'); themeBtn.innerText = '☀️ Toggle Light Mode'; } 
+            else { document.body.removeAttribute('data-theme'); themeBtn.innerText = '🌙 Toggle Dark Mode'; } 
+            localStorage.setItem('theme', isDark ? 'dark' : 'light'); 
+            document.getElementById('user-dropdown').classList.remove('show');
+        };
 
         function switchNav(view) {
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
             const isMobile = window.innerWidth <= 768;
             
-            let navTarget = view === 'profile' ? 'directory' : view;
-            const navItem = document.getElementById('nav-' + navTarget);
-            if(navItem) navItem.classList.add('active');
+            let navTarget = view === 'profile' ? 'directory' : (view === 'user' ? 'user-toggle' : view);
+            const navItem = document.getElementById('nav-' + navTarget) || document.getElementById('btn-' + navTarget);
+            if(navItem && navTarget !== 'user-toggle') navItem.classList.add('active');
 
             if (isMobile) {
                 document.getElementById('list-sidebar').style.display = (view === 'directory') ? 'flex' : 'none';
                 document.getElementById('main-content').style.display = (view === 'directory') ? 'none' : 'flex';
             } else {
-                document.getElementById('list-sidebar').style.display = (view === 'dashboard' || view === 'calendar' || view === 'pipeline') ? 'none' : 'flex';
+                document.getElementById('list-sidebar').style.display = (view === 'dashboard' || view === 'calendar' || view === 'pipeline' || view === 'user') ? 'none' : 'flex';
                 document.getElementById('main-content').style.display = 'flex';
             }
 
             const container = document.getElementById('view-' + (view === 'directory' ? 'dashboard' : view));
             if(container) container.classList.add('active');
-            document.getElementById('top-title').innerText = view.charAt(0).toUpperCase() + view.slice(1);
+            
+            // Handle Top Bar visibility
+            const topBarActions = document.getElementById('top-bar-actions-container');
+            if(view === 'user') {
+                document.getElementById('top-title').innerText = "My Profile";
+                if(topBarActions) topBarActions.style.display = 'none';
+            } else {
+                document.getElementById('top-title').innerText = view.charAt(0).toUpperCase() + view.slice(1);
+                if(topBarActions) topBarActions.style.display = 'flex';
+            }
+
             if(view === 'dashboard') updateDashboard();
             if(view === 'calendar') renderCalendar();
             if(view === 'pipeline') renderKanban();
@@ -472,23 +541,49 @@
         document.getElementById('nav-directory').onclick = () => switchNav('directory');
         document.getElementById('nav-calendar').onclick = () => switchNav('calendar');
         document.getElementById('nav-pipeline').onclick = () => switchNav('pipeline');
+        document.getElementById('btn-my-profile').onclick = () => { switchNav('user'); document.getElementById('user-dropdown').classList.remove('show'); };
 
+        // ==========================================
+        // TREE RENDERING (Properly Fixed)
+        // ==========================================
         function renderTree() {
             const root = document.getElementById('tree-root'); root.innerHTML = '';
             const renderNode = (node, parentEl, parentName) => {
                 if(searchQuery && !node.name.toLowerCase().includes(searchQuery)) return false;
-                const nodeDiv = document.createElement('div'); nodeDiv.className = node.id === 'root' ? '' : 'node-container';
-                const label = document.createElement('div'); label.className = `node-label`;
+                
+                const nodeDiv = document.createElement('div'); 
+                nodeDiv.className = node.id === 'root' ? '' : 'node-container';
+                
+                const label = document.createElement('div'); 
+                label.className = `node-label`;
                 
                 const arrow = document.createElement('span');
-                if (node.children && node.children.length > 0) {
-                    arrow.className = 'toggle-arrow'; arrow.innerHTML = node.isOpen ? '▼' : '▶';
-                    arrow.onclick = (e) => { e.stopPropagation(); node.isOpen = !node.isOpen; renderTree(); save(); };
-                } else { arrow.className = 'toggle-placeholder'; }
+                if (node.type === 'location' || node.type === 'company' || (node.children && node.children.length > 0)) {
+                    arrow.className = 'toggle-arrow'; 
+                    arrow.innerHTML = node.isOpen ? '▼' : '▶';
+                    // The completely safe click listener
+                    arrow.onclick = (e) => { 
+                        e.stopPropagation(); 
+                        node.isOpen = !node.isOpen; 
+                        renderTree(); 
+                        save(); 
+                    };
+                } else { 
+                    arrow.className = 'toggle-placeholder'; 
+                }
                 
+                const contentGroup = document.createElement('div');
+                contentGroup.className = 'name-container';
                 let icon = node.type === 'location' ? '📂' : node.type === 'company' ? '🏢' : '👤';
-                label.innerHTML = `${arrow.outerHTML} <span class="icon-box">${icon}</span> ${node.name}`;
-                label.onclick = () => loadProfile(node, parentName);
+                contentGroup.innerHTML = `<span class="icon-box">${icon}</span> ${node.name}`;
+                contentGroup.onclick = (e) => {
+                    e.stopPropagation();
+                    loadProfile(node, parentName);
+                }
+
+                // Append safely as objects
+                label.appendChild(arrow);
+                label.appendChild(contentGroup);
                 nodeDiv.appendChild(label);
 
                 if (node.isOpen && node.children) {
