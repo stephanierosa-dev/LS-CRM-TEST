@@ -45,6 +45,16 @@
         .nav-item:hover, .nav-item.active { background: var(--primary-light); color: var(--primary); }
         .nav-spacer { flex-grow: 1; }
 
+        /* User Dropdown Toggle Menu */
+        .dropdown-menu { display: none; position: absolute; left: 80px; bottom: 20px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); padding: 8px; min-width: 160px; z-index: 100; flex-direction: column; gap: 4px; }
+        .dropdown-menu.show { display: flex; animation: slideUp 0.2s ease forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .dropdown-header { padding: 8px 12px; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border); margin-bottom: 4px; letter-spacing: 0.05em;}
+        .dropdown-item { padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; color: var(--text-main); }
+        .dropdown-item:hover { background: var(--bg-base); }
+        .dropdown-item.danger { color: var(--danger); }
+        .dropdown-item.danger:hover { background: rgba(239, 68, 68, 0.1); }
+
         /* Directory Tree Sidebar */
         #list-sidebar { width: 320px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: relative; z-index: 40; flex-shrink: 0;}
         .sidebar-header { padding: 24px 24px 16px; }
@@ -98,7 +108,7 @@
         .job-pill { background: var(--bg-base); color: var(--text-main); border: 1px solid var(--border); padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 500; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transition); }
         .job-pill:hover { border-color: var(--primary); color: var(--primary); }
 
-        /* Asymmetrical Profile Layout */
+        /* Profile Layout */
         .profile-header { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap;}
         .avatar-lg { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: white; background: var(--primary); }
         .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -162,6 +172,8 @@
             #btn-export-csv { display: none; }
             .view-container { padding: 20px; padding-bottom: 100px;}
             #cloud-status { bottom: 85px; }
+            /* Mobile adjustments for dropdown */
+            .dropdown-menu { left: auto; right: 10px; bottom: 80px; }
         }
     </style>
 </head>
@@ -181,13 +193,20 @@
 
     <div id="app-container">
         <div id="nav-sidebar">
-            <div class="nav-item active" id="nav-dashboard">📈</div>
-            <div class="nav-item" id="nav-calendar">📅</div>
-            <div class="nav-item" id="nav-directory">📁</div>
-            <div class="nav-item" id="nav-pipeline">📊</div>
+            <div class="nav-item active" id="nav-dashboard" title="Dashboard">📈</div>
+            <div class="nav-item" id="nav-calendar" title="Calendar">📅</div>
+            <div class="nav-item" id="nav-directory" title="Directory">📁</div>
+            <div class="nav-item" id="nav-pipeline" title="Pipeline">📊</div>
             <div class="nav-spacer"></div>
-            <div class="nav-item" id="btn-theme">☀️</div>
-            <div class="nav-item" id="btn-logout" title="Logout" style="color: var(--danger);">🚪</div>
+            <div class="nav-item" id="btn-theme" title="Toggle Theme">☀️</div>
+            
+            <div style="position: relative;" id="user-menu-container">
+                <div class="nav-item" id="btn-user-toggle" title="Settings & Account">⚙️</div>
+                <div id="user-dropdown" class="dropdown-menu">
+                    <div class="dropdown-header">Account</div>
+                    <div class="dropdown-item danger" id="btn-logout">🚪 Log Out</div>
+                </div>
+            </div>
         </div>
 
         <div id="list-sidebar">
@@ -372,11 +391,25 @@
                 });
             });
 
+            // NEW: User Toggle Menu Logic
+            const userToggle = document.getElementById('btn-user-toggle');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            userToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', () => {
+                userDropdown.classList.remove('show');
+            });
+
             document.getElementById('btn-logout').addEventListener('click', () => {
                 signOut(auth).then(() => {
                     document.getElementById('auth-email').value = '';
                     document.getElementById('auth-password').value = '';
                     document.getElementById('auth-error').innerText = '';
+                    userDropdown.classList.remove('show');
                 });
             });
         }
@@ -392,6 +425,7 @@
 
         window.initCRMData = async () => {
             try {
+                // Kept at v4 to preserve your live test data!
                 const docSnap = await window.fbGetDoc(window.fbDoc(window.db, "crm", "master_live_v4"));
                 if (docSnap.exists()) { crmData = docSnap.data(); } 
                 else { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v4"), defaultData); crmData = defaultData; }
@@ -439,9 +473,6 @@
         document.getElementById('nav-calendar').onclick = () => switchNav('calendar');
         document.getElementById('nav-pipeline').onclick = () => switchNav('pipeline');
 
-        // ==========================================
-        // TREE RENDERING (Fixed for proper clicking)
-        // ==========================================
         function renderTree() {
             const root = document.getElementById('tree-root'); root.innerHTML = '';
             const renderNode = (node, parentEl, parentName) => {
@@ -449,38 +480,17 @@
                 const nodeDiv = document.createElement('div'); nodeDiv.className = node.id === 'root' ? '' : 'node-container';
                 const label = document.createElement('div'); label.className = `node-label`;
                 
-                // 1. Create Arrow Element
                 const arrow = document.createElement('span');
-                if (node.type === 'location' || node.type === 'company' || (node.children && node.children.length > 0)) {
-                    arrow.className = 'toggle-arrow'; 
-                    arrow.innerHTML = node.isOpen ? '▼' : '▶';
-                    // This click event is now perfectly safe
-                    arrow.onclick = (e) => { 
-                        e.stopPropagation(); 
-                        node.isOpen = !node.isOpen; 
-                        renderTree(); 
-                        save(); 
-                    };
-                } else { 
-                    arrow.className = 'toggle-placeholder'; 
-                }
+                if (node.children && node.children.length > 0) {
+                    arrow.className = 'toggle-arrow'; arrow.innerHTML = node.isOpen ? '▼' : '▶';
+                    arrow.onclick = (e) => { e.stopPropagation(); node.isOpen = !node.isOpen; renderTree(); save(); };
+                } else { arrow.className = 'toggle-placeholder'; }
                 
-                // 2. Create Icon and Name Element
-                const nameContainer = document.createElement('div');
-                nameContainer.className = 'name-container';
                 let icon = node.type === 'location' ? '📂' : node.type === 'company' ? '🏢' : '👤';
-                nameContainer.innerHTML = `<span class="icon-box">${icon}</span> ${node.name}`;
-                nameContainer.onclick = (e) => { 
-                    e.stopPropagation(); 
-                    loadProfile(node, parentName); 
-                };
-
-                // 3. Combine them safely without using innerHTML on the parent
-                label.appendChild(arrow);
-                label.appendChild(nameContainer);
+                label.innerHTML = `${arrow.outerHTML} <span class="icon-box">${icon}</span> ${node.name}`;
+                label.onclick = () => loadProfile(node, parentName);
                 nodeDiv.appendChild(label);
 
-                // 4. Render Children
                 if (node.isOpen && node.children) {
                     const childrenDiv = document.createElement('div');
                     node.children.forEach(child => renderNode(child, childrenDiv, node.name));
@@ -595,7 +605,7 @@
                 };
                 addNode(crmData);
             }
-            renderTree(); // Force immediate UI update for the new tree structure
+            renderTree(); 
             await save(); loadProfile(activeContact, actParentName); closeModal();
         };
 
