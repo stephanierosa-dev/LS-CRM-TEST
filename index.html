@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro CRM - Master Edition</title>
+    <title>Pro CRM - Unified Edition</title>
     <style>
         /* --- MODERN UI & THEME ENGINE --- */
         :root {
@@ -45,7 +45,7 @@
         #tree-root { flex-grow: 1; overflow-y: auto; padding: 16px 24px; }
         .node-container { margin-left: 20px; position: relative; }
         .node-container::before { content: ''; position: absolute; top: 0; bottom: 0; left: -11px; width: 1px; background-color: var(--border); }
-        .node-label { display: flex; justify-content: flex-start; align-items: center; padding: 6px 8px; margin: 2px 0; border-radius: 8px; font-size: 0.9rem; transition: var(--transition); user-select: none; border: 1px solid transparent; }
+        .node-label { display: flex; justify-content: flex-start; align-items: center; padding: 6px 8px; margin: 2px 0; border-radius: 8px; font-size: 0.9rem; transition: var(--transition); user-select: none; border: 1px solid transparent; cursor: pointer;}
         .node-label:hover { background-color: var(--bg-base); }
         .node-label.drag-over { background-color: var(--primary-light); border: 1px dashed var(--primary); }
         
@@ -53,11 +53,12 @@
         .toggle-arrow:hover { background: var(--border); color: var(--text-main); }
         .toggle-placeholder { width: 20px; margin-right: 4px; display: inline-block; }
         .location-node { font-weight: 600; color: var(--text-main); }
-        .contact-node { font-weight: 500; color: var(--text-muted); cursor: pointer; }
+        .company-node { font-weight: 600; color: var(--text-main); }
+        .contact-node { font-weight: 500; color: var(--text-muted); }
         .contact-node:hover { color: var(--primary); }
         
-        .icon-box { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 6px; background: var(--border); color: var(--text-muted); font-size: 10px; cursor: pointer;}
-        .location-node .icon-box { background: var(--primary-light); color: var(--primary); }
+        .icon-box { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 6px; background: var(--border); color: var(--text-muted); font-size: 10px; }
+        .location-node .icon-box, .company-node .icon-box { background: var(--primary-light); color: var(--primary); }
 
         /* Main Content */
         #main-content { flex-grow: 1; display: flex; flex-direction: column; position: relative; background: var(--bg-base); }
@@ -182,7 +183,9 @@
             .metric-card .value { font-size: 1.5rem; }
 
             .profile-header { flex-direction: column; text-align: center; gap: 12px; }
-            .profile-header .btn { align-self: stretch; width: 100%; justify-content: center; margin-top: 10px; }
+            #profile-actions { flex-direction: column; width: 100%; }
+            #profile-actions .btn { width: 100%; margin: 0; justify-content: center;}
+            
             .content-grid { grid-template-columns: 1fr; gap: 16px; } 
             
             .cal-day-label { font-size: 0.7rem; }
@@ -194,7 +197,6 @@
             .kanban-col { flex: 0 0 280px; } 
 
             .modal-content { padding: 20px; width: 95%; margin: 10px; box-sizing: border-box;}
-            #modal-contact-fields > div { flex-direction: column !important; gap: 0 !important; }
             .form-group { margin-bottom: 12px; }
             .modal-actions { flex-direction: column; }
             .modal-actions .btn { width: 100%; margin-bottom: 8px; justify-content: center; }
@@ -232,7 +234,7 @@
 
             <div id="view-dashboard" class="view-container active">
                 <div class="metric-cards">
-                    <div class="metric-card"><h3>Total Contacts</h3><div class="value" id="dash-total-contacts">0</div></div>
+                    <div class="metric-card"><h3>Total Records</h3><div class="value" id="dash-total-contacts">0</div></div>
                     <div class="metric-card"><h3>Active Deals</h3><div class="value" id="dash-active-deals">0</div></div>
                     <div class="metric-card"><h3>Pipeline Value</h3><div class="value revenue" id="dash-pipe-val">$0</div></div>
                     <div class="metric-card"><h3>Closed Won</h3><div class="value revenue" id="dash-closed-val">$0</div></div>
@@ -272,7 +274,12 @@
                         </div>
                     </div>
                     <div style="flex-grow: 1;"></div>
-                    <button class="btn btn-outline" id="btn-edit-profile">✏️ Edit</button>
+                    
+                    <div id="profile-actions" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+                        <button class="btn btn-primary" id="btn-add-sub">➕ Add Sub-Entry</button>
+                        <button class="btn btn-outline" id="btn-edit-profile">✏️ Edit</button>
+                        <button class="btn btn-outline" id="btn-delete-profile" style="color: var(--danger); border-color: #fca5a5;">🗑️ Delete</button>
+                    </div>
                 </div>
 
                 <div class="content-grid">
@@ -318,10 +325,11 @@
             <h2 id="modal-title" style="margin-top: 0; margin-bottom: 24px;">Add Entry</h2>
             <form id="entry-form">
                 <div class="form-group" id="group-type">
-                    <label>Entry Type</label>
+                    <label>Icon / Entity Type</label>
                     <select id="modal-type" class="form-control">
-                        <option value="contact">👤 Person / Deal</option>
-                        <option value="location">📂 Location / Folder</option>
+                        <option value="contact">👤 Person / Contact</option>
+                        <option value="company">🏢 Company / Account</option>
+                        <option value="location">📂 Region / Folder</option>
                     </select>
                 </div>
                 
@@ -336,9 +344,9 @@
                 </div>
                 
                 <div id="modal-contact-fields">
-                    <div style="display: flex; gap: 16px;">
-                        <div class="form-group" style="flex: 1;"><label>Role / Title</label><input type="text" id="modal-title-input" class="form-control"></div>
-                        <div class="form-group" style="flex: 1;"><label>Pipeline Status</label>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1; min-width: 150px;"><label>Role / Title</label><input type="text" id="modal-title-input" class="form-control"></div>
+                        <div class="form-group" style="flex: 1; min-width: 150px;"><label>Pipeline Status</label>
                             <select id="modal-status" class="form-control">
                                 <option value="Lead">Lead</option>
                                 <option value="Active">In Progress</option>
@@ -346,9 +354,9 @@
                             </select>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 16px;">
-                        <div class="form-group" style="flex: 1;"><label>Deal Value ($)</label><input type="number" id="modal-value" class="form-control"></div>
-                        <div class="form-group" style="flex: 1;"><label>Phone</label><input type="text" id="modal-phone" class="form-control"></div>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1; min-width: 150px;"><label>Deal Value ($)</label><input type="number" id="modal-value" class="form-control"></div>
+                        <div class="form-group" style="flex: 1; min-width: 150px;"><label>Phone</label><input type="text" id="modal-phone" class="form-control"></div>
                     </div>
                     <div class="form-group"><label>Email</label><input type="email" id="modal-email" class="form-control"></div>
                     <div class="form-group" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);">
@@ -374,6 +382,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+        // YOUR EXACT FIREBASE KEYS
         const firebaseConfig = {
             apiKey: "AIzaSyDNtfKuegpo-3GAr3r36EfhCa1ynzOkA1M",
             authDomain: "ls-crm-test.firebaseapp.com",
@@ -474,28 +483,35 @@
         let activeContact = null; let activeContactParentName = ''; let editingId = null; let searchQuery = '';
         document.getElementById('act-date').value = new Date().toISOString().split('T')[0];
 
+        // DATA INJECTION (Ensures old folders instantly get contact capabilities)
+        function ensureDetails(node) {
+            if (!node.details) node.details = { status: 'Lead', value: 0, title: '', phone: '', email: '', customFields: [], history: [] };
+            if (node.children) node.children.forEach(ensureDetails);
+        }
+
         // HYBRID SAVE/LOAD ENGINE
         async function loadData() {
             setTimeout(async () => {
                 if (window.isCloudReady && window.db) {
                     try {
-                        const docSnap = await window.fbGetDoc(window.fbDoc(window.db, "crm", "master_live_v2"));
+                        const docSnap = await window.fbGetDoc(window.fbDoc(window.db, "crm", "master_live_v3"));
                         if (docSnap.exists()) { crmData = docSnap.data(); } 
-                        else { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v2"), defaultData); crmData = defaultData; }
+                        else { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v3"), defaultData); crmData = defaultData; }
                     } catch(e) { console.error("Firebase read error", e); crmData = defaultData; }
                 } else {
-                    crmData = JSON.parse(localStorage.getItem('crm_pro_mobile_v1')) || defaultData;
+                    crmData = JSON.parse(localStorage.getItem('crm_pro_unified_v1')) || defaultData;
                 }
+                ensureDetails(crmData); // Makes sure every entry can hold values
                 renderTree(); updateDashboard(); renderCalendar(); switchNav('dashboard');
             }, 150);
         }
 
         const save = async () => { 
             if (window.isCloudReady && window.db) {
-                try { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v2"), crmData); } 
+                try { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v3"), crmData); } 
                 catch(e) { console.error("Firebase write error", e); }
             } else {
-                localStorage.setItem('crm_pro_mobile_v1', JSON.stringify(crmData)); 
+                localStorage.setItem('crm_pro_unified_v1', JSON.stringify(crmData)); 
             }
             renderTree(); if(activeContact) loadProfile(activeContact, activeContactParentName); updateDashboard(); renderCalendar(); 
         };
@@ -520,9 +536,7 @@
             if (view === 'profile') activeNav = 'directory'; 
             document.getElementById('nav-' + activeNav).classList.add('active');
             
-            // On Mobile: Hide main content and show list-sidebar FULL screen if directory is tapped
             const isMobile = window.innerWidth <= 768;
-            
             if (isMobile) {
                 document.getElementById('list-sidebar').style.display = (view === 'directory') ? 'flex' : 'none';
                 document.getElementById('main-content').style.display = (view === 'directory') ? 'none' : 'flex';
@@ -552,8 +566,9 @@
         function getAggregatedData() {
             let stats = { totalContacts: 0, dealsByStage: { lead: 0, active: 0, closed: 0 }, revByStage: { lead: 0, active: 0, closed: 0 } };
             function traverse(node) {
-                if(node.type === 'contact') {
-                    stats.totalContacts++; const s = node.details.status.toLowerCase(); const val = Number(node.details.value) || 0;
+                // Now includes ALL entries that have a value, so folders can hold deal value
+                if(node.type === 'contact' || node.type === 'company' || (node.details && node.details.value > 0)) {
+                    stats.totalContacts++; const s = (node.details.status || 'lead').toLowerCase(); const val = Number(node.details.value) || 0;
                     if(stats.dealsByStage[s] !== undefined) { stats.dealsByStage[s]++; stats.revByStage[s] += val; }
                 }
                 if(node.children) node.children.forEach(traverse);
@@ -578,7 +593,7 @@
         let currentMonth = new Date().getMonth(); let currentYear = new Date().getFullYear();
         window.changeMonth = (dir) => { currentMonth += dir; if (currentMonth < 0) { currentMonth = 11; currentYear--; } else if (currentMonth > 11) { currentMonth = 0; currentYear++; } renderCalendar(); };
         function extractJobs(node, jobsList) {
-            if(node.type === 'contact' && node.details.history) { node.details.history.forEach(h => { if(h.type === 'job') jobsList.push({ contact: node, job: h }); }); }
+            if(node.details && node.details.history) { node.details.history.forEach(h => { if(h.type === 'job') jobsList.push({ contact: node, job: h }); }); }
             if(node.children) node.children.forEach(c => extractJobs(c, jobsList)); return jobsList;
         }
         function renderCalendar() {
@@ -608,7 +623,7 @@
         function renderTree() {
             const root = document.getElementById('tree-root'); root.innerHTML = '';
             const renderNode = (node, parentEl, parentName) => {
-                if(searchQuery && node.type === 'contact' && !node.name.toLowerCase().includes(searchQuery)) return false;
+                if(searchQuery && !node.name.toLowerCase().includes(searchQuery)) return false;
                 let hasVisibleChildren = false;
                 const nodeDiv = document.createElement('div'); nodeDiv.className = node.id === 'root' ? '' : 'node-container';
                 const label = document.createElement('div'); label.className = `node-label ${node.type}-node`;
@@ -630,12 +645,18 @@
                 label.appendChild(arrow);
 
                 const nameContainer = document.createElement('div'); nameContainer.style.display = 'flex'; nameContainer.style.alignItems = 'center'; nameContainer.style.flexGrow = '1';
-                if (node.type === 'location') {
-                    nameContainer.innerHTML = `<span class="icon-box">📂</span>${node.name}`; nameContainer.onclick = () => { node.isOpen = !node.isOpen; save(); };
+                
+                // UNIFIED ICONS
+                let iconHtml = '';
+                if(node.type === 'location') {
+                    nameContainer.innerHTML = `<span class="icon-box">📂</span>${node.name}`;
+                } else if(node.type === 'company') {
+                    nameContainer.innerHTML = `<span class="icon-box">🏢</span>${node.name}`;
                 } else {
                     nameContainer.innerHTML = `<span class="icon-box" style="border-radius:50%; background:${getColor(node.name)}; color:white; border:none;">${getInitials(node.name)}</span>${node.name}`;
-                    nameContainer.onclick = () => loadProfile(node, parentName);
                 }
+                nameContainer.onclick = () => loadProfile(node, parentName);
+                
                 label.appendChild(nameContainer); nodeDiv.appendChild(label);
 
                 if (node.isOpen && node.children) {
@@ -643,7 +664,7 @@
                     node.children.forEach(child => { if(renderNode(child, childrenDiv, node.name)) hasVisibleChildren = true; });
                     if(hasVisibleChildren || !searchQuery) nodeDiv.appendChild(childrenDiv);
                 }
-                if (!searchQuery || node.type === 'contact' || hasVisibleChildren) { parentEl.appendChild(nodeDiv); return true; }
+                if (!searchQuery || hasVisibleChildren || node.type === 'contact') { parentEl.appendChild(nodeDiv); return true; }
                 return false;
             };
             renderNode(crmData, root, '');
@@ -661,24 +682,34 @@
         }
         function moveNodeInTree(draggedId, targetParentId) {
             const nodeToMove = extractNode(crmData, draggedId); if (!nodeToMove) return;
-            modifyNode(crmData, targetParentId, nodeToMove); save();
+            modifyNode(crmData, targetParentId, nodeToMove, 'add'); save();
         }
 
         // Profile
         function loadProfile(contact, parentName) {
             activeContact = contact; activeContactParentName = parentName;
-            document.getElementById('prof-name').innerText = contact.name; document.getElementById('prof-title').innerText = contact.details.title || 'No Title';
-            document.getElementById('prof-phone').innerText = contact.details.phone || 'N/A'; document.getElementById('prof-email').innerText = contact.details.email || 'N/A';
+            document.getElementById('prof-name').innerText = contact.name; 
+            document.getElementById('prof-title').innerText = contact.details?.title || 'No Title';
+            document.getElementById('prof-phone').innerText = contact.details?.phone || 'N/A'; 
+            document.getElementById('prof-email').innerText = contact.details?.email || 'N/A';
             document.getElementById('prof-parent').innerText = parentName || 'Global';
-            const badge = document.getElementById('prof-status'); badge.innerText = contact.details.status; badge.className = `status-badge status-${contact.details.status.toLowerCase()}`;
-            document.getElementById('prof-value').innerText = contact.details.value ? formatCurrency(contact.details.value) : '';
-            const av = document.getElementById('prof-avatar'); av.innerText = getInitials(contact.name); av.style.background = getColor(contact.name);
+            
+            const badge = document.getElementById('prof-status'); 
+            badge.innerText = contact.details?.status || 'Lead'; 
+            badge.className = `status-badge status-${(contact.details?.status || 'lead').toLowerCase()}`;
+            
+            document.getElementById('prof-value').innerText = contact.details?.value ? formatCurrency(contact.details.value) : '';
+            
+            const av = document.getElementById('prof-avatar'); 
+            if(contact.type === 'location') { av.innerText = '📂'; av.style.background = 'var(--primary-light)'; av.style.color = 'var(--primary)'; }
+            else if(contact.type === 'company') { av.innerText = '🏢'; av.style.background = 'var(--primary-light)'; av.style.color = 'var(--primary)'; }
+            else { av.innerText = getInitials(contact.name); av.style.background = getColor(contact.name); av.style.color = 'white'; }
             
             const cfContainer = document.getElementById('prof-custom-fields-container'); cfContainer.innerHTML = '';
-            if(contact.details.customFields && contact.details.customFields.length > 0) { contact.details.customFields.forEach(cf => { cfContainer.innerHTML += `<div class="info-row"><span class="info-icon">📌</span><div class="info-content"><div class="info-label">${cf.key}</div><div>${cf.value}</div></div></div>`; }); }
+            if(contact.details?.customFields && contact.details.customFields.length > 0) { contact.details.customFields.forEach(cf => { cfContainer.innerHTML += `<div class="info-row"><span class="info-icon">📌</span><div class="info-content"><div class="info-label">${cf.key}</div><div>${cf.value}</div></div></div>`; }); }
 
             const tl = document.getElementById('prof-timeline'); tl.innerHTML = '';
-            const hist = contact.details.history || [];
+            const hist = contact.details?.history || [];
             [...hist].sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(item => {
                 const div = document.createElement('div'); div.className = `tl-item type-${item.type}`;
                 let icon = item.type === 'call' ? '📞' : item.type === 'job' ? '📅' : item.type === 'task' ? '✅' : '📝';
@@ -689,6 +720,27 @@
             });
             switchNav('profile');
         }
+
+        // NEW: Direct Add Sub-Entry & Delete functionality
+        document.getElementById('btn-add-sub').onclick = () => { 
+            if(!activeContact) return; 
+            document.getElementById('modal-title').innerText = `Add under ${activeContact.name}`; 
+            document.getElementById('group-type').style.display = 'block'; 
+            document.getElementById('group-parent').style.display = 'block'; 
+            const sel = document.getElementById('modal-parent'); 
+            sel.innerHTML = ''; 
+            populateParentDropdown(crmData, sel); 
+            sel.value = activeContact.id; 
+            modal.style.display = 'flex'; 
+        };
+
+        document.getElementById('btn-delete-profile').onclick = () => {
+            if(!activeContact) return;
+            if(confirm(`Are you sure you want to delete ${activeContact.name} and ALL of their sub-entries? This cannot be undone.`)) {
+                modifyNode(crmData, activeContact.id, null, 'delete');
+                activeContact = null; save(); switchNav('dashboard');
+            }
+        };
 
         document.getElementById('btn-log-act').onclick = () => {
             const text = document.getElementById('act-text').value; const dateStr = document.getElementById('act-date').value;
@@ -701,18 +753,20 @@
 
         // Pipeline
         function extractContacts(node, contactsList) {
-            if(node.type === 'contact') contactsList.push(node); if(node.children) node.children.forEach(c => extractContacts(c, contactsList)); return contactsList;
+            // Unify Pipeline: Push anything that has a value > 0 or is a person/company
+            if(node.type === 'contact' || node.type === 'company' || (node.details && node.details.value > 0)) contactsList.push(node); 
+            if(node.children) node.children.forEach(c => extractContacts(c, contactsList)); return contactsList;
         }
         function renderKanban() {
             const totals = { lead: 0, active: 0, closed: 0 };
             ['lead', 'active', 'closed'].forEach(s => { document.getElementById('col-'+s).innerHTML = ''; document.getElementById('count-'+s).innerText = '0'; document.getElementById('rev-'+s).innerText = '$0'; });
             extractContacts(crmData, []).forEach(c => {
-                const s = c.details.status.toLowerCase(); const col = document.getElementById('col-'+s);
+                const s = (c.details?.status || 'lead').toLowerCase(); const col = document.getElementById('col-'+s);
                 if(col) {
-                    const val = Number(c.details.value) || 0; totals[s] += val;
+                    const val = Number(c.details?.value) || 0; totals[s] += val;
                     const card = document.createElement('div'); card.className = 'kanban-card'; card.draggable = true;
                     if(s === 'active') card.style.borderLeftColor = 'var(--primary)'; if(s === 'closed') card.style.borderLeftColor = 'var(--success)'; if(s === 'lead') card.style.borderLeftColor = 'var(--warning)';
-                    card.innerHTML = `<h4>${c.name}</h4><p>${c.details.title || ''}</p>${val > 0 ? `<div class="kanban-card-val">${formatCurrency(val)}</div>` : ''}`;
+                    card.innerHTML = `<h4>${c.name}</h4><p>${c.details?.title || ''}</p>${val > 0 ? `<div class="kanban-card-val">${formatCurrency(val)}</div>` : ''}`;
                     card.ondragstart = (e) => { e.dataTransfer.setData('pipeline-contact-id', c.id); card.style.opacity = '0.5'; };
                     card.ondragend = () => { card.style.opacity = '1'; }; card.onclick = () => { loadProfile(c, 'Directory'); };
                     col.appendChild(card); document.getElementById('count-'+s).innerText = col.children.length;
@@ -725,50 +779,77 @@
         // Modals & Exports
         const modal = document.getElementById('modal-overlay');
         function closeModal() { modal.style.display = 'none'; document.getElementById('entry-form').reset(); document.getElementById('custom-fields-editor').innerHTML = ''; editingId = null; }
+        
+        // Unified Parent Dropdown
         function populateParentDropdown(node, selectEl, depth = "") {
-            const opt = document.createElement('option'); opt.value = node.id; opt.innerText = depth + (node.type === 'contact' ? '👤 ' : '📂 ') + node.name;
+            const opt = document.createElement('option'); opt.value = node.id; 
+            let icon = '📂 '; if(node.type==='contact') icon='👤 '; else if(node.type==='company') icon='🏢 ';
+            opt.innerText = depth + icon + node.name;
             selectEl.appendChild(opt); if(node.children) node.children.forEach(c => populateParentDropdown(c, selectEl, depth + "— "));
         }
+        
         window.addCustomFieldRow = (key = "", value = "") => {
             const container = document.getElementById('custom-fields-editor'); const rowId = 'cf_' + Date.now() + Math.random();
             const div = document.createElement('div'); div.className = 'custom-field-row'; div.id = rowId;
             div.innerHTML = `<input type="text" class="form-control cf-key" placeholder="Field Name" value="${key}"><input type="text" class="form-control cf-val" placeholder="Value" value="${value}"><button type="button" class="btn-remove-cf" onclick="document.getElementById('${rowId}').remove()">×</button>`;
             container.appendChild(div);
         };
+        
         document.getElementById('btn-add-global').onclick = () => { document.getElementById('modal-title').innerText = 'Add New Entry'; document.getElementById('group-type').style.display = 'block'; document.getElementById('group-parent').style.display = 'block'; const sel = document.getElementById('modal-parent'); sel.innerHTML = ''; populateParentDropdown(crmData, sel); modal.style.display = 'flex'; };
+        
         document.getElementById('btn-edit-profile').onclick = () => {
             if(!activeContact) return; editingId = activeContact.id;
             document.getElementById('modal-title').innerText = 'Edit Profile'; document.getElementById('group-type').style.display = 'none'; document.getElementById('group-parent').style.display = 'none';
-            document.getElementById('modal-type').value = 'contact'; document.getElementById('modal-name').value = activeContact.name; document.getElementById('modal-title-input').value = activeContact.details.title; document.getElementById('modal-status').value = activeContact.details.status; document.getElementById('modal-value').value = activeContact.details.value || ''; document.getElementById('modal-phone').value = activeContact.details.phone; document.getElementById('modal-email').value = activeContact.details.email; document.getElementById('custom-fields-editor').innerHTML = '';
+            document.getElementById('modal-type').value = activeContact.type || 'contact'; document.getElementById('modal-name').value = activeContact.name; document.getElementById('modal-title-input').value = activeContact.details.title; document.getElementById('modal-status').value = activeContact.details.status; document.getElementById('modal-value').value = activeContact.details.value || ''; document.getElementById('modal-phone').value = activeContact.details.phone; document.getElementById('modal-email').value = activeContact.details.email; document.getElementById('custom-fields-editor').innerHTML = '';
             if(activeContact.details.customFields) { activeContact.details.customFields.forEach(cf => addCustomFieldRow(cf.key, cf.value)); }
-            document.getElementById('modal-contact-fields').style.display = 'block'; modal.style.display = 'flex';
+            modal.style.display = 'flex';
         };
-        document.getElementById('modal-type').onchange = (e) => { document.getElementById('modal-contact-fields').style.display = e.target.value === 'contact' ? 'block' : 'none'; };
 
-        function modifyNode(currentNode, targetId, payload) {
-            if(currentNode.id === targetId && !editingId) { if(!currentNode.children) currentNode.children = []; currentNode.children.push(payload); currentNode.isOpen = true; return true; }
-            if(currentNode.children) {
-                for(let i=0; i<currentNode.children.length; i++) {
-                    if(editingId && currentNode.children[i].id === editingId) { payload.details.history = currentNode.children[i].details.history; payload.children = currentNode.children[i].children; currentNode.children[i] = payload; return true; }
-                    if(modifyNode(currentNode.children[i], targetId, payload)) return true;
+        // NEW: Handles Add, Edit, AND Delete
+        function modifyNode(currentNode, targetId, payload, action = 'edit') {
+            if (action === 'delete') {
+                if (currentNode.children) {
+                    for (let i = 0; i < currentNode.children.length; i++) {
+                        if (currentNode.children[i].id === targetId) { currentNode.children.splice(i, 1); return true; }
+                        if (modifyNode(currentNode.children[i], targetId, null, 'delete')) return true;
+                    }
+                }
+                return false;
+            }
+            if (action === 'add' && currentNode.id === targetId) { 
+                if(!currentNode.children) currentNode.children = []; 
+                currentNode.children.push(payload); currentNode.isOpen = true; return true; 
+            }
+            if (action === 'edit' && currentNode.children) {
+                for (let i = 0; i < currentNode.children.length; i++) {
+                    if (currentNode.children[i].id === targetId) { 
+                        payload.details.history = currentNode.children[i].details?.history || []; 
+                        payload.children = currentNode.children[i].children || []; 
+                        currentNode.children[i] = payload; return true; 
+                    }
+                    if (modifyNode(currentNode.children[i], targetId, payload, 'edit')) return true;
                 }
             } return false;
         }
 
         document.getElementById('entry-form').onsubmit = (e) => {
             e.preventDefault(); const type = document.getElementById('modal-type').value;
-            const payload = { id: editingId || 'id_' + Date.now(), name: document.getElementById('modal-name').value, type: type, isOpen: type === 'location' ? true : undefined };
-            if(type === 'contact') {
-                const cfKeys = document.querySelectorAll('.cf-key'); const cfVals = document.querySelectorAll('.cf-val'); const customFields = [];
-                for(let i=0; i<cfKeys.length; i++) { if(cfKeys[i].value.trim()) customFields.push({ key: cfKeys[i].value.trim(), value: cfVals[i].value.trim() }); }
-                payload.details = { title: document.getElementById('modal-title-input').value, status: document.getElementById('modal-status').value, value: Number(document.getElementById('modal-value').value) || 0, phone: document.getElementById('modal-phone').value, email: document.getElementById('modal-email').value, history: [], customFields: customFields };
-            }
-            modifyNode(crmData, document.getElementById('modal-parent').value, payload); save(); closeModal(); 
+            const payload = { id: editingId || 'id_' + Date.now(), name: document.getElementById('modal-name').value, type: type, isOpen: type === 'location' ? true : false };
+            
+            const cfKeys = document.querySelectorAll('.cf-key'); const cfVals = document.querySelectorAll('.cf-val'); const customFields = [];
+            for(let i=0; i<cfKeys.length; i++) { if(cfKeys[i].value.trim()) customFields.push({ key: cfKeys[i].value.trim(), value: cfVals[i].value.trim() }); }
+            
+            payload.details = { title: document.getElementById('modal-title-input').value, status: document.getElementById('modal-status').value, value: Number(document.getElementById('modal-value').value) || 0, phone: document.getElementById('modal-phone').value, email: document.getElementById('modal-email').value, history: [], customFields: customFields };
+            
+            if (editingId) { modifyNode(crmData, editingId, payload, 'edit'); } 
+            else { modifyNode(crmData, document.getElementById('modal-parent').value, payload, 'add'); }
+            
+            save(); closeModal(); 
         };
 
         document.getElementById('btn-export-csv').onclick = () => {
             const allContacts = extractContacts(crmData, []); let csvContent = "data:text/csv;charset=utf-8,Name,Role,Status,Deal Value,Phone,Email\n";
-            allContacts.forEach(c => { csvContent += [`"${c.name}"`, `"${c.details.title || ''}"`, `"${c.details.status || ''}"`, c.details.value || 0, `"${c.details.phone || ''}"`, `"${c.details.email || ''}"`].join(",") + "\n"; });
+            allContacts.forEach(c => { csvContent += [`"${c.name}"`, `"${c.details?.title || ''}"`, `"${c.details?.status || ''}"`, c.details?.value || 0, `"${c.details?.phone || ''}"`, `"${c.details?.email || ''}"`].join(",") + "\n"; });
             const a = document.createElement("a"); a.setAttribute("href", encodeURI(csvContent)); a.setAttribute("download", "crm_export.csv"); document.body.appendChild(a); a.click(); a.remove();
         };
 
