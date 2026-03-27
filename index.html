@@ -37,7 +37,7 @@
         .auth-btn:hover { background: var(--primary-hover); }
         #auth-error { color: var(--danger); font-size: 0.85rem; margin-top: 12px; min-height: 20px; }
 
-        #app-container { display: none; width: 100%; height: 100%; position: relative; } /* Hidden until logged in */
+        #app-container { display: none; width: 100%; height: 100%; position: relative; }
 
         /* Navigation Sidebar */
         #nav-sidebar { width: 70px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 20px 0; z-index: 50; flex-shrink: 0;}
@@ -102,7 +102,6 @@
         .avatar-lg { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 700; color: white; background: var(--primary); }
         .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
         
-        /* 35/65 Split Grid */
         .content-grid { display: grid; grid-template-columns: 320px 1fr; gap: 32px; align-items: start; }
         
         .panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
@@ -113,10 +112,12 @@
         .info-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 600; letter-spacing: 0.05em;}
         .info-val { font-size: 0.95rem; color: var(--text-main); word-wrap: break-word; }
 
-        /* Sleek Timeline */
-        .timeline-input { display: flex; gap: 12px; margin-bottom: 32px; background: var(--bg-base); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border); align-items: center; flex-wrap: wrap;}
+        /* Timeline & Notes */
+        .timeline-input { display: flex; gap: 12px; margin-bottom: 24px; background: var(--bg-base); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border); align-items: center; flex-wrap: wrap;}
         .form-control { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-panel); color: var(--text-main); font-size: 0.9rem; font-family: inherit; outline: none; transition: var(--transition); }
         .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        
+        textarea.form-control { resize: vertical; min-height: 80px; }
         
         .tl-item { position: relative; padding-left: 24px; margin-bottom: 24px; }
         .tl-item::before { content: ''; position: absolute; left: 0; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
@@ -153,12 +154,13 @@
             #nav-sidebar { width: 100%; height: 70px; flex-direction: row; border-right: none; border-top: 1px solid var(--border); position: fixed; bottom: 0; left: 0; justify-content: space-around; padding: 0; }
             #list-sidebar { width: 100%; height: calc(100vh - 70px); position: absolute; top: 0; left: 0; z-index: 45; display: none; }
             #main-content { width: 100%; height: calc(100vh - 70px); margin-bottom: 70px; }
-            .content-grid { grid-template-columns: 1fr; }
+            .content-grid { grid-template-columns: 1fr; gap: 24px; }
             .profile-header { flex-direction: column; text-align: center; gap: 16px;}
             #profile-actions { justify-content: center; width: 100%; }
             .top-bar { padding: 0 20px; }
             #btn-export-csv { display: none; }
             .view-container { padding: 20px; padding-bottom: 100px;}
+            #cloud-status { bottom: 85px; }
         }
     </style>
 </head>
@@ -253,15 +255,27 @@
                         </div>
                     </div>
                     
-                    <div class="panel" style="background:transparent; border:none; padding:0; box-shadow:none;">
-                        <h3>Activity Feed</h3>
-                        <div class="timeline-input">
-                            <select id="act-type" class="form-control" style="width: auto; min-width: 100px; border-color:transparent; font-weight:600; background:var(--bg-base); cursor:pointer;"><option value="job">📅 Job</option><option value="note">📝 Note</option><option value="call">📞 Call</option></select>
-                            <input type="date" id="act-date" class="form-control" style="width: auto; border-color:transparent; background:var(--bg-base); cursor:pointer;">
-                            <input type="text" id="act-text" class="form-control" placeholder="Write a description or detail..." style="flex:1; border-color:transparent;">
-                            <button class="btn btn-primary" id="btn-log-act">Save</button>
+                    <div style="display:flex; flex-direction:column; gap:24px;">
+                        
+                        <div class="panel">
+                            <h3>General Notes</h3>
+                            <textarea id="prof-notes" class="form-control" rows="4" placeholder="Enter persistent notes about this account or folder..."></textarea>
+                            <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+                                <button class="btn btn-outline" id="btn-save-notes">💾 Save Notes</button>
+                            </div>
                         </div>
-                        <div id="prof-timeline"></div>
+
+                        <div class="panel" style="background:transparent; border:none; padding:0; box-shadow:none;">
+                            <h3>Activity Feed</h3>
+                            <div class="timeline-input">
+                                <select id="act-type" class="form-control" style="width: auto; min-width: 100px; border-color:transparent; font-weight:600; background:var(--bg-base); cursor:pointer;"><option value="job">📅 Job</option><option value="note">📝 Note</option><option value="call">📞 Call</option></select>
+                                <input type="date" id="act-date" class="form-control" style="width: auto; border-color:transparent; background:var(--bg-base); cursor:pointer;">
+                                <input type="text" id="act-text" class="form-control" placeholder="Write a description or detail..." style="flex:1; border-color:transparent;">
+                                <button class="btn btn-primary" id="btn-log-act">Add</button>
+                            </div>
+                            <div id="prof-timeline"></div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -322,53 +336,56 @@
             appId: "1:784881503676:web:22df7257bf0a1757282fb9"
         };
 
-        const app = initializeApp(firebaseConfig);
-        window.db = getFirestore(app);
-        window.fbDoc = doc; window.fbGetDoc = getDoc; window.fbSetDoc = setDoc;
-        const auth = getAuth(app);
-        window.auth = auth;
+        window.isCloudReady = firebaseConfig.apiKey.indexOf("AIza") === 0;
+        if (window.isCloudReady) {
+            const app = initializeApp(firebaseConfig);
+            window.db = getFirestore(app);
+            window.fbDoc = doc; window.fbGetDoc = getDoc; window.fbSetDoc = setDoc;
+            const auth = getAuth(app);
+            window.auth = auth;
 
-        const authOverlay = document.getElementById('auth-overlay');
-        const appContainer = document.getElementById('app-container');
-        const cloudStatus = document.getElementById('cloud-status');
+            const authOverlay = document.getElementById('auth-overlay');
+            const appContainer = document.getElementById('app-container');
+            const cloudStatus = document.getElementById('cloud-status');
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                authOverlay.style.display = 'none';
-                appContainer.style.display = 'flex';
-                cloudStatus.innerText = '☁️ Secure Cloud Sync';
-                window.initCRMData(); 
-            } else {
-                authOverlay.style.display = 'flex';
-                appContainer.style.display = 'none';
-                cloudStatus.innerText = '🔒 Please Login';
-            }
-        });
-
-        document.getElementById('auth-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-password').value;
-            const errDiv = document.getElementById('auth-error');
-            errDiv.innerText = "Authenticating...";
-            
-            signInWithEmailAndPassword(auth, email, pass).catch((error) => {
-                errDiv.innerText = "Error: Invalid credentials or account not found.";
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    authOverlay.style.display = 'none';
+                    appContainer.style.display = 'flex';
+                    cloudStatus.innerText = '☁️ Secure Cloud Sync';
+                    window.initCRMData(); 
+                } else {
+                    authOverlay.style.display = 'flex';
+                    appContainer.style.display = 'none';
+                    cloudStatus.innerText = '🔒 Please Login';
+                }
             });
-        });
 
-        document.getElementById('btn-logout').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                document.getElementById('auth-email').value = '';
-                document.getElementById('auth-password').value = '';
-                document.getElementById('auth-error').innerText = '';
+            document.getElementById('auth-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('auth-email').value;
+                const pass = document.getElementById('auth-password').value;
+                const errDiv = document.getElementById('auth-error');
+                errDiv.innerText = "Authenticating...";
+                
+                signInWithEmailAndPassword(auth, email, pass).catch((error) => {
+                    errDiv.innerText = "Error: Invalid credentials or account not found.";
+                });
             });
-        });
+
+            document.getElementById('btn-logout').addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    document.getElementById('auth-email').value = '';
+                    document.getElementById('auth-password').value = '';
+                    document.getElementById('auth-error').innerText = '';
+                });
+            });
+        }
     </script>
 
     <script>
         const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
-        const stateNodes = US_STATES.map(s => ({ id: 'st_'+s.toLowerCase().replace(/ /g,'_'), name: s, type: 'location', details: { status: 'Lead', history: [] }, children: [] }));
+        const stateNodes = US_STATES.map(s => ({ id: 'st_'+s.toLowerCase().replace(/ /g,'_'), name: s, type: 'location', details: { status: 'Lead', history: [], notes: '' }, children: [] }));
         const defaultData = { id: 'root', name: 'Global Directory', type: 'location', isOpen: true, children: [ { id: 'loc_usa', name: 'United States', type: 'location', isOpen: true, children: stateNodes } ] };
         
         let crmData = defaultData;
@@ -376,6 +393,7 @@
 
         window.initCRMData = async () => {
             try {
+                // Kept at v4 to preserve your live test data!
                 const docSnap = await window.fbGetDoc(window.fbDoc(window.db, "crm", "master_live_v4"));
                 if (docSnap.exists()) { crmData = docSnap.data(); } 
                 else { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v4"), defaultData); crmData = defaultData; }
@@ -388,7 +406,6 @@
         const save = async () => { 
             try { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v4"), crmData); } catch(e) {}
             renderTree(); updateDashboard(); renderKanban();
-            if (activeContact) loadProfile(activeContact, actParentName); 
         };
 
         const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num || 0);
@@ -423,7 +440,6 @@
         document.getElementById('nav-calendar').onclick = () => switchNav('calendar');
         document.getElementById('nav-pipeline').onclick = () => switchNav('pipeline');
 
-        // REPAIRED: Instant UI rendering on toggle, silent save
         function renderTree() {
             const root = document.getElementById('tree-root'); root.innerHTML = '';
             const renderNode = (node, parentEl, parentName) => {
@@ -434,7 +450,6 @@
                 const arrow = document.createElement('span');
                 if (node.children && node.children.length > 0) {
                     arrow.className = 'toggle-arrow'; arrow.innerHTML = node.isOpen ? '▼' : '▶';
-                    // FIX: Render UI instantly, then save silently
                     arrow.onclick = (e) => { e.stopPropagation(); node.isOpen = !node.isOpen; renderTree(); save(); };
                 } else { arrow.className = 'toggle-placeholder'; }
                 
@@ -464,6 +479,9 @@
             document.getElementById('disp-phone').innerText = d.phone || 'N/A';
             document.getElementById('disp-parent').innerText = parentName || 'N/A';
             
+            // Populate General Notes
+            document.getElementById('prof-notes').value = d.notes || '';
+            
             let icon = node.type === 'location' ? '📂' : node.type === 'company' ? '🏢' : getInitials(node.name);
             document.getElementById('prof-avatar').innerText = icon;
             document.getElementById('prof-avatar').style.background = (node.type === 'contact') ? getColor(node.name) : 'var(--primary-light)';
@@ -485,6 +503,19 @@
             switchNav('profile');
         }
 
+        // SAVE GENERAL NOTES
+        document.getElementById('btn-save-notes').onclick = async () => {
+            if(!activeContact) return;
+            if(!activeContact.details) activeContact.details = {};
+            activeContact.details.notes = document.getElementById('prof-notes').value;
+            
+            const btn = document.getElementById('btn-save-notes');
+            btn.innerText = '✅ Saved!';
+            await save();
+            setTimeout(() => btn.innerText = '💾 Save Notes', 2000);
+        };
+
+        // Action Forms
         document.getElementById('btn-edit-profile').onclick = () => {
             if(!activeContact) return;
             editingId = activeContact.id;
@@ -534,14 +565,14 @@
                 updateNode(crmData);
             } else {
                 const parentId = editingId ? null : (document.getElementById('modal-parent-group').style.display === 'none' ? activeContact.id : document.getElementById('modal-parent').value);
-                const newNode = { id: 'id_'+Date.now(), name: name, type: document.getElementById('modal-type').value, details: { status: status, value: val, title: document.getElementById('modal-title-input').value, phone: document.getElementById('modal-phone').value, email: document.getElementById('modal-email').value, customFields: cfs, history: [] }, children: [] };
+                const newNode = { id: 'id_'+Date.now(), name: name, type: document.getElementById('modal-type').value, details: { status: status, value: val, title: document.getElementById('modal-title-input').value, phone: document.getElementById('modal-phone').value, email: document.getElementById('modal-email').value, customFields: cfs, history: [], notes: '' }, children: [] };
                 const addNode = (n) => {
                     if (n.id === parentId) { n.children.push(newNode); n.isOpen = true; return true; }
                     if (n.children) return n.children.some(addNode);
                 };
                 addNode(crmData);
             }
-            await save(); closeModal();
+            await save(); loadProfile(activeContact, actParentName); closeModal();
         };
 
         window.closeModal = () => document.getElementById('modal-overlay').style.display = 'none';
@@ -583,7 +614,8 @@
             if(!date || !text || !activeContact) return;
             if(!activeContact.details.history) activeContact.details.history = [];
             activeContact.details.history.push({ type: document.getElementById('act-type').value, date, content: text });
-            document.getElementById('act-text').value = ''; await save();
+            document.getElementById('act-text').value = ''; 
+            await save(); loadProfile(activeContact, actParentName);
         };
 
         function updateDashboard() {
@@ -593,7 +625,7 @@
             document.getElementById('dash-total').innerText = count; document.getElementById('dash-active').innerText = active; document.getElementById('dash-pipe-val').innerText = formatCurrency(pipe);
         }
 
-        // REPAIRED: Kanban Drag and Drop Logic
+        // Kanban Drag and Drop Logic
         function renderKanban() {
             const cols = { lead: document.getElementById('col-lead'), active: document.getElementById('col-active'), closed: document.getElementById('col-closed') };
             const revs = { lead: 0, active: 0, closed: 0 };
@@ -603,7 +635,7 @@
                 const s = (n.details?.status || '').toLowerCase();
                 if (s === 'lead' || s === 'active' || s === 'closed') {
                     const card = document.createElement('div'); card.className = 'kanban-card';
-                    card.draggable = true; // FIX: Makes card grabbable
+                    card.draggable = true;
                     card.ondragstart = (e) => { e.dataTransfer.setData('pipeline-contact-id', n.id); card.style.opacity = '0.5'; };
                     card.ondragend = () => { card.style.opacity = '1'; };
                     
@@ -618,7 +650,6 @@
             document.getElementById('rev-lead').innerText = formatCurrency(revs.lead); document.getElementById('rev-active').innerText = formatCurrency(revs.active); document.getElementById('rev-closed').innerText = formatCurrency(revs.closed);
         }
 
-        // FIX: Global drop function
         window.dropKanban = (e, newStatus) => {
             const id = e.dataTransfer.getData('pipeline-contact-id');
             const updateStatus = (n) => {
