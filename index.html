@@ -162,45 +162,37 @@
            📱 RESPONSIVE MOBILE OVERRIDES
            ======================================================= */
         @media (max-width: 768px) {
-            #app-container { flex-direction: column-reverse; } /* Move Nav to Bottom */
+            #app-container { flex-direction: column-reverse; } 
             
-            /* Bottom Tab Bar Navigation */
             #nav-sidebar { width: 100%; height: 65px; flex-direction: row; border-right: none; border-top: 1px solid var(--border); padding: 0 10px; justify-content: space-around; z-index: 60; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); box-sizing: border-box;}
             .nav-item { margin: 0; width: 50px; height: 50px; }
             .nav-spacer { display: none; }
 
-            /* Full Screen Tree/Directory on Mobile */
             #list-sidebar { position: absolute; top: 0; left: 0; width: 100%; height: calc(100vh - 65px); z-index: 40; border-right: none; }
             
-            /* Main Content Area */
             #main-content { width: 100%; height: calc(100vh - 65px); }
             .top-bar { padding: 0 16px; height: 60px; }
             .top-bar-title { font-size: 1rem; }
             .top-bar-actions .btn { padding: 6px 12px; font-size: 0.8rem; }
-            #btn-export-csv { display: none; } /* Hide on mobile to save space */
+            #btn-export-csv { display: none; } 
             .view-container { padding: 16px; }
 
-            /* Dashboard Fixes */
             .metric-cards { grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
             .metric-card { padding: 16px; }
             .metric-card .value { font-size: 1.5rem; }
 
-            /* Profile Fixes */
             .profile-header { flex-direction: column; text-align: center; gap: 12px; }
             .profile-header .btn { align-self: stretch; width: 100%; justify-content: center; margin-top: 10px; }
-            .content-grid { grid-template-columns: 1fr; gap: 16px; } /* Stack panels */
+            .content-grid { grid-template-columns: 1fr; gap: 16px; } 
             
-            /* Calendar Fixes */
             .cal-day-label { font-size: 0.7rem; }
             .cal-day { min-height: 80px; padding: 4px; }
             .cal-day-num { font-size: 0.75rem; }
             .job-pill { font-size: 0.65rem; padding: 2px 4px; }
 
-            /* Pipeline/Kanban Fixes */
             #pipeline-view { padding-bottom: 10px; }
-            .kanban-col { flex: 0 0 280px; } /* Slightly smaller columns on mobile */
+            .kanban-col { flex: 0 0 280px; } 
 
-            /* Modal Fixes */
             .modal-content { padding: 20px; width: 95%; margin: 10px; box-sizing: border-box;}
             #modal-contact-fields > div { flex-direction: column !important; gap: 0 !important; }
             .form-group { margin-bottom: 12px; }
@@ -382,7 +374,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // YOUR FIREBASE KEYS ARE ACTIVE
         const firebaseConfig = {
             apiKey: "AIzaSyDNtfKuegpo-3GAr3r36EfhCa1ynzOkA1M",
             authDomain: "ls-crm-test.firebaseapp.com",
@@ -488,7 +479,6 @@
             setTimeout(async () => {
                 if (window.isCloudReady && window.db) {
                     try {
-                        // Using a new master file to guarantee the 50 states load over previous test data
                         const docSnap = await window.fbGetDoc(window.fbDoc(window.db, "crm", "master_live_v2"));
                         if (docSnap.exists()) { crmData = docSnap.data(); } 
                         else { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v2"), defaultData); crmData = defaultData; }
@@ -527,7 +517,7 @@
             document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
             
             let activeNav = view;
-            if (view === 'profile') activeNav = 'directory'; // Highlight directory icon when in profile
+            if (view === 'profile') activeNav = 'directory'; 
             document.getElementById('nav-' + activeNav).classList.add('active');
             
             // On Mobile: Hide main content and show list-sidebar FULL screen if directory is tapped
@@ -548,7 +538,6 @@
             else { document.getElementById('view-directory').classList.add('active'); document.getElementById('top-title').innerText = 'Directory'; }
         }
         
-        // Ensure clicking directory tab properly routes back to list on mobile
         document.getElementById('nav-dashboard').onclick = () => switchNav('dashboard');
         document.getElementById('nav-calendar').onclick = () => switchNav('calendar');
         document.getElementById('nav-directory').onclick = () => {
@@ -557,7 +546,6 @@
         };
         document.getElementById('nav-pipeline').onclick = () => switchNav('pipeline');
 
-        // Re-check layout if user resizes window (e.g. rotates tablet)
         window.addEventListener('resize', () => { if(activeContact) switchNav('profile'); else switchNav('dashboard'); });
 
         // Dashboard
