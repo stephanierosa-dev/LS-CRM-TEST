@@ -3,43 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro CRM - Compact Elegant</title>
+    <title>Pro CRM - Enterprise Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- COMPACT ELEGANT DESIGN SYSTEM --- */
+        /* --- ENTERPRISE DESIGN SYSTEM --- */
         :root {
-            --bg-base: #f0f4f8; 
-            --bg-panel: #ffffff; 
-            --bg-glass: rgba(255, 255, 255, 0.85);
-            --border: rgba(226, 232, 240, 0.8); 
-            --border-hover: #cbd5e1;
-            --text-main: #0f172a; 
-            --text-muted: #64748b;
-            
-            --primary: #4f46e5; 
-            --primary-hover: #4338ca; 
-            --primary-light: #e0e7ff;
+            --bg-base: #f0f4f8; --bg-panel: #ffffff; --bg-glass: rgba(255, 255, 255, 0.85);
+            --border: rgba(226, 232, 240, 0.8); --border-hover: #cbd5e1;
+            --text-main: #0f172a; --text-muted: #64748b;
+            --primary: #4f46e5; --primary-hover: #4338ca; --primary-light: #e0e7ff;
             --primary-gradient: linear-gradient(135deg, #4f46e5, #7c3aed);
-            
             --success: #10b981; --success-light: #d1fae5;
             --warning: #f59e0b; --warning-light: #fef3c7;
             --danger: #ef4444; --danger-light: #fee2e2;
-            
             --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05); 
             --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.05);
             --shadow-lg: 0 10px 20px -3px rgba(15, 23, 42, 0.08);
-            
             --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px;
             --transition: all 0.2s ease;
         }
 
         [data-theme="dark"] {
-            --bg-base: #0b1120; 
-            --bg-panel: #1e293b; 
-            --bg-glass: rgba(30, 41, 59, 0.85);
-            --border: rgba(255, 255, 255, 0.08); 
-            --text-main: #f8fafc; 
-            --text-muted: #94a3b8;
+            --bg-base: #0b1120; --bg-panel: #1e293b; --bg-glass: rgba(30, 41, 59, 0.85);
+            --border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc; --text-muted: #94a3b8;
             --primary-light: rgba(79, 70, 229, 0.2);
         }
 
@@ -66,7 +52,7 @@
         .nav-item.active { background: var(--primary-gradient); color: white; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); }
         .nav-spacer { flex-grow: 1; }
 
-        /* User Dropdown Toggle Menu */
+        /* User Dropdown */
         .dropdown-menu { display: none; position: absolute; left: 75px; bottom: 16px; background: var(--bg-glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 8px; min-width: 160px; z-index: 100; flex-direction: column; gap: 4px; }
         .dropdown-menu.show { display: flex; animation: slideUp 0.15s ease forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -118,6 +104,16 @@
         .metric-card .value { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1; color: var(--text-main);}
         .value.revenue { background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
+        /* Centralized Tasks Dashboard */
+        #view-tasks { max-width: 1000px; margin: 0 auto; width: 100%; }
+        .global-task-item { display: flex; align-items: flex-start; gap: 16px; background: var(--bg-panel); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm); margin-bottom: 12px; transition: var(--transition); }
+        .global-task-item:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
+        .task-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: var(--primary); margin-top: 4px;}
+        .task-details { flex-grow: 1; }
+        .task-account { font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.05em; cursor: pointer; display: inline-block;}
+        .task-content { font-size: 1rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px;}
+        .task-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 16px; }
+        
         /* Calendar */
         #view-calendar { max-width: 1400px; margin: 0 auto; width: 100%; }
         .cal-header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -141,12 +137,16 @@
         .content-grid { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; max-width: 1400px; }
         
         .panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); }
-        .panel h3 { margin: 0 0 16px 0; font-size: 0.95rem; color: var(--text-main); font-weight: 800; display: flex; align-items: center; gap: 8px;}
+        .panel h3 { margin: 0 0 16px 0; font-size: 0.95rem; color: var(--text-main); font-weight: 800; display: flex; align-items: center; justify-content: space-between;}
         
         .info-row { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--border);}
         .info-row:last-child { margin-bottom: 0; padding-bottom: 0; border: none;}
         .info-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; letter-spacing: 0.05em;}
         .info-val { font-size: 0.9rem; color: var(--text-main); font-weight: 600; word-wrap: break-word; }
+
+        /* Document Vault UI */
+        .doc-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg-base); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 8px;}
+        .doc-item span { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
 
         /* Sleek Timeline & Notes Threads */
         .timeline-input { display: flex; gap: 10px; margin-bottom: 20px; background: var(--bg-panel); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border); align-items: center; flex-wrap: wrap; box-shadow: var(--shadow-sm);}
@@ -168,6 +168,7 @@
         .tl-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; align-items: center;}
         .tl-type { font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.05em; }
         .tl-text { font-size: 0.9rem; line-height: 1.5; color: var(--text-main); background: var(--bg-base); border: 1px solid var(--border); padding: 10px 12px; border-radius: var(--radius-sm); font-weight: 500; }
+        .tl-text.task-done { text-decoration: line-through; color: var(--text-muted); background: transparent; border-style: dashed;}
 
         /* Kanban / Pipeline */
         #pipeline-view { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 20px; height: 100%; }
@@ -185,8 +186,8 @@
         /* Modal Popup */
         #modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); z-index: 100; display: none; align-items: center; justify-content: center; }
         .modal-content { background: var(--bg-panel); width: 95%; max-width: 500px; border-radius: var(--radius-lg); padding: 24px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg); border: 1px solid var(--border); }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; margin-bottom: 4px; font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
         #cloud-status { position: fixed; bottom: 16px; right: 16px; font-size: 0.7rem; color: var(--text-main); background: var(--bg-glass); backdrop-filter: blur(10px); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); z-index: 99; font-weight: 600; box-shadow: var(--shadow-sm);}
 
@@ -201,7 +202,7 @@
             .profile-header { flex-direction: column; text-align: center; gap: 12px;}
             #profile-actions { justify-content: center; width: 100%; flex-wrap: wrap; }
             .top-bar { padding: 0 16px; height: 50px;}
-            #btn-export-csv { display: none; }
+            .top-bar-actions .btn { padding: 6px 10px; font-size: 0.75rem; }
             .view-container { padding: 16px; padding-bottom: 80px;}
             #cloud-status { bottom: 70px; }
             .dropdown-menu { left: auto; right: 10px; bottom: 70px; }
@@ -212,7 +213,7 @@
 
     <div id="auth-overlay">
         <div class="auth-box">
-            <h1>Pro CRM</h1>
+            <h1>Enterprise CRM</h1>
             <form id="auth-form">
                 <input type="email" id="auth-email" class="auth-input" placeholder="Email Address" required>
                 <input type="password" id="auth-password" class="auth-input" placeholder="Password" required>
@@ -225,6 +226,7 @@
     <div id="app-container">
         <div id="nav-sidebar">
             <div class="nav-item active" id="nav-dashboard" title="Dashboard">📈</div>
+            <div class="nav-item" id="nav-tasks" title="My Tasks">☑️</div>
             <div class="nav-item" id="nav-calendar" title="Calendar">📅</div>
             <div class="nav-item" id="nav-directory" title="Directory">📁</div>
             <div class="nav-item" id="nav-pipeline" title="Pipeline">📊</div>
@@ -244,8 +246,8 @@
 
         <div id="list-sidebar">
             <div class="sidebar-header">
-                <h2>Directory</h2>
-                <input type="text" id="searchInput" class="search-bar" placeholder="Search accounts...">
+                <h2>Global Directory</h2>
+                <input type="text" id="searchInput" class="search-bar" placeholder="Search globally (Name, Email, Tags)...">
             </div>
             <div id="tree-root"></div>
         </div>
@@ -254,7 +256,9 @@
             <div class="top-bar">
                 <div class="top-bar-title" id="top-title">Dashboard</div>
                 <div class="top-bar-actions" id="top-bar-actions-container">
-                    <button class="btn btn-ghost" id="btn-export-csv">Export CSV</button>
+                    <button class="btn btn-ghost" id="btn-export-csv" title="Download Backup">📄 Export</button>
+                    <input type="file" id="csv-upload-input" accept=".csv" style="display:none;">
+                    <button class="btn btn-outline" id="btn-import-csv" title="Upload Contacts">📥 Import</button>
                     <button class="btn btn-primary" id="btn-add-global">➕ Add Entry</button>
                 </div>
             </div>
@@ -264,6 +268,14 @@
                     <div class="metric-card"><div class="info-label">Total Records</div><div class="value" id="dash-total">0</div></div>
                     <div class="metric-card"><div class="info-label">Active Deals</div><div class="value" id="dash-active">0</div></div>
                     <div class="metric-card"><div class="info-label">Pipeline Value</div><div class="value revenue" id="dash-pipe-val">$0</div></div>
+                </div>
+            </div>
+
+            <div id="view-tasks" class="view-container">
+                <div style="max-width: 1000px; margin: 0 auto; width: 100%;">
+                    <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.02em;">Global Tasks & To-Do</h1>
+                    <div id="global-task-list">
+                        </div>
                 </div>
             </div>
 
@@ -323,6 +335,17 @@
                             <div class="info-row"><div class="info-label">Phone</div><div class="info-val" id="disp-phone"></div></div>
                             <div class="info-row" style="border:none; padding-bottom:0;"><div class="info-label">Parent Account</div><div class="info-val" id="disp-parent" style="color:var(--primary); font-weight:700;"></div></div>
                         </div>
+                        
+                        <div class="panel">
+                            <h3 style="display:flex; justify-content:space-between; align-items:center;">
+                                The Vault 
+                                <button class="btn btn-ghost" style="padding:4px 8px; font-size:0.75rem;" onclick="alert('Firebase Storage Setup Required: To enable true cloud file hosting, navigate to your Firebase Console -> Storage -> Get Started. Once initialized, the app logic can be updated to push PDFs directly into the bucket.')">➕ Upload</button>
+                            </h3>
+                            <div id="prof-documents-container">
+                                <div style="color:var(--text-muted); font-size:0.8rem; font-style:italic;">No files uploaded yet. Enable Firebase Storage to unlock.</div>
+                            </div>
+                        </div>
+
                         <div class="panel" id="custom-fields-panel" style="display:none;">
                             <h3>Custom Attributes</h3>
                             <div id="prof-custom-fields"></div>
@@ -333,16 +356,16 @@
                         <div class="panel">
                             <h3>General Notes</h3>
                             <div id="prof-notes-thread" class="note-thread-box"></div>
-                            <textarea id="prof-notes-input" class="form-control" placeholder="Add a new note to the thread..."></textarea>
+                            <textarea id="prof-notes-input" class="form-control" placeholder="Enter persistent notes about this account or folder..."></textarea>
                             <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-                                <button class="btn btn-outline" id="btn-save-notes">➕ Add Note</button>
+                                <button class="btn btn-outline" id="btn-save-notes">💾 Save Notes</button>
                             </div>
                         </div>
 
                         <div class="panel" style="background:transparent; border:none; padding:0; box-shadow:none;">
                             <h3 style="margin-bottom:16px;">Activity Feed</h3>
                             <div class="timeline-input">
-                                <select id="act-type" class="form-control" style="width: auto; min-width: 90px; font-weight:700; cursor:pointer;"><option value="job">📅 Job</option><option value="note">📝 Task</option><option value="call">📞 Call</option></select>
+                                <select id="act-type" class="form-control" style="width: auto; min-width: 90px; font-weight:700; cursor:pointer;"><option value="task">☑️ Task</option><option value="job">📅 Job</option><option value="call">📞 Call</option></select>
                                 <input type="date" id="act-date" class="form-control" style="width: auto; cursor:pointer; font-weight:600;">
                                 <input type="text" id="act-text" class="form-control" placeholder="Write a description..." style="flex:1;">
                                 <button class="btn btn-primary" id="btn-log-act">Save</button>
@@ -501,7 +524,7 @@
 
         const save = async () => { 
             try { await window.fbSetDoc(window.fbDoc(window.db, "crm", "master_live_v4"), crmData); } catch(e) {}
-            updateDashboard(); renderKanban();
+            updateDashboard(); renderKanban(); renderGlobalTasks();
         };
 
         const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num || 0);
@@ -532,7 +555,7 @@
                 document.getElementById('list-sidebar').style.display = (view === 'directory') ? 'flex' : 'none';
                 document.getElementById('main-content').style.display = (view === 'directory') ? 'none' : 'flex';
             } else {
-                document.getElementById('list-sidebar').style.display = (view === 'dashboard' || view === 'calendar' || view === 'pipeline' || view === 'user') ? 'none' : 'flex';
+                document.getElementById('list-sidebar').style.display = (view === 'dashboard' || view === 'calendar' || view === 'pipeline' || view === 'tasks' || view === 'user') ? 'none' : 'flex';
                 document.getElementById('main-content').style.display = 'flex';
             }
 
@@ -551,19 +574,38 @@
             if(view === 'dashboard') updateDashboard();
             if(view === 'calendar') renderCalendar();
             if(view === 'pipeline') renderKanban();
+            if(view === 'tasks') renderGlobalTasks();
         }
 
         document.getElementById('nav-dashboard').onclick = () => switchNav('dashboard');
+        document.getElementById('nav-tasks').onclick = () => switchNav('tasks');
         document.getElementById('nav-directory').onclick = () => switchNav('directory');
         document.getElementById('nav-calendar').onclick = () => switchNav('calendar');
         document.getElementById('nav-pipeline').onclick = () => switchNav('pipeline');
         document.getElementById('btn-my-profile').onclick = () => { switchNav('user'); document.getElementById('user-dropdown').classList.remove('show'); };
 
+        // ==========================================
+        // DEEP GLOBAL SEARCH ENGINE
+        // ==========================================
+        document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value.toLowerCase(); renderTree(); };
+        
+        function matchesSearch(n, query) {
+            if(!query) return true;
+            if(n.name.toLowerCase().includes(query)) return true;
+            if(n.details) {
+                if(n.details.email && n.details.email.toLowerCase().includes(query)) return true;
+                if(n.details.phone && n.details.phone.toLowerCase().includes(query)) return true;
+                if(n.details.customFields && n.details.customFields.some(cf => cf.value.toLowerCase().includes(query))) return true;
+            }
+            if(n.children && n.children.some(c => matchesSearch(c, query))) return true;
+            return false;
+        }
+
         function renderTree() {
             const root = document.getElementById('tree-root'); root.innerHTML = '';
             
             const renderNode = (node, parentEl, parentName) => {
-                if(searchQuery && !node.name.toLowerCase().includes(searchQuery)) return false;
+                if(!matchesSearch(node, searchQuery)) return false;
                 
                 const nodeDiv = document.createElement('div'); 
                 nodeDiv.className = node.id === 'root' ? '' : 'node-container';
@@ -572,14 +614,17 @@
                 label.className = `node-label`;
                 
                 const arrow = document.createElement('span');
+                // Auto-expand if searching
+                let openStatus = searchQuery ? true : node.isOpen;
+
                 if (node.type === 'location' || node.type === 'company' || (node.children && node.children.length > 0)) {
                     arrow.className = 'toggle-arrow'; 
-                    arrow.innerText = node.isOpen ? '▼' : '▶';
+                    arrow.innerText = openStatus ? '▼' : '▶';
                     arrow.onclick = (e) => { 
                         e.stopPropagation(); 
                         node.isOpen = !node.isOpen; 
                         renderTree(); 
-                        save(); 
+                        if(!searchQuery) save(); 
                     };
                 } else { 
                     arrow.className = 'toggle-placeholder'; 
@@ -589,16 +634,13 @@
                 contentGroup.className = 'name-container';
                 let icon = node.type === 'location' ? '📂' : node.type === 'company' ? '🏢' : '👤';
                 contentGroup.innerHTML = `<span class="icon-box">${icon}</span> ${node.name}`;
-                contentGroup.onclick = (e) => {
-                    e.stopPropagation();
-                    loadProfile(node, parentName);
-                }
+                contentGroup.onclick = (e) => { e.stopPropagation(); loadProfile(node, parentName); }
 
                 label.appendChild(arrow);
                 label.appendChild(contentGroup);
                 nodeDiv.appendChild(label);
 
-                if (node.isOpen && node.children) {
+                if (openStatus && node.children) {
                     const childrenDiv = document.createElement('div');
                     node.children.forEach(child => renderNode(child, childrenDiv, node.name));
                     nodeDiv.appendChild(childrenDiv);
@@ -608,8 +650,9 @@
             renderNode(crmData, root, 'Root');
         }
 
-        document.getElementById('searchInput').oninput = (e) => { searchQuery = e.target.value.toLowerCase(); renderTree(); };
-
+        // ==========================================
+        // PROFILE & TIMELINE (Tasks Upgrade)
+        // ==========================================
         function loadProfile(node, parentName) {
             activeContact = node; actParentName = parentName;
             document.getElementById('prof-name').innerText = node.name;
@@ -633,7 +676,7 @@
                 d.customFields.forEach(cf => { cfContainer.innerHTML += `<div class="info-row"><div class="info-label">${cf.key}</div><div class="info-val">${cf.value}</div></div>`; });
             } else { cfPanel.style.display = 'none'; }
 
-            // Render Notes Thread (With User Auth Data)
+            // Render Notes Thread
             const notesThread = document.getElementById('prof-notes-thread');
             notesThread.innerHTML = '';
             let noteArray = Array.isArray(d.notes) ? d.notes : (d.notes ? [{ date: 'Legacy Note', text: d.notes, author: 'User' }] : []);
@@ -657,18 +700,139 @@
             }
             document.getElementById('prof-notes-input').value = '';
 
-            // Render Activity Feed (With User Auth Data)
+            // Render Activity Feed (With Task Checkboxes)
             const tl = document.getElementById('prof-timeline'); tl.innerHTML = '';
             if(d.history) { [...d.history].reverse().forEach(h => {
                 const item = document.createElement('div'); item.className = 'tl-item';
                 const authorTag = h.author ? `<span style="margin-left:8px; font-weight:600; font-size:0.7rem; color:var(--text-muted); text-transform:none;">by ${h.author}</span>` : '';
-                item.innerHTML = `<div class="tl-header"><span class="tl-type">${h.type}${authorTag}</span><span>${h.date}</span></div><div class="tl-text">${h.content}</div>`;
+                
+                if(h.type === 'task') {
+                    item.innerHTML = `
+                        <div class="tl-header"><span class="tl-type">${h.type}${authorTag}</span><span>${h.date}</span></div>
+                        <div class="tl-text ${h.done ? 'task-done' : ''}" style="display:flex; gap:10px; align-items:flex-start;">
+                            <input type="checkbox" class="task-checkbox" ${h.done ? 'checked' : ''} onclick="toggleTaskStatus('${node.id}', '${h.id}', this.checked)">
+                            <span style="padding-top:2px;">${h.content}</span>
+                        </div>`;
+                } else {
+                    item.innerHTML = `<div class="tl-header"><span class="tl-type">${h.type}${authorTag}</span><span>${h.date}</span></div><div class="tl-text">${h.content}</div>`;
+                }
                 tl.appendChild(item);
             }); }
             switchNav('profile');
         }
 
-        // SAVE THREADED NOTES (WITH AUTHOR)
+        window.toggleTaskStatus = async (nodeId, histId, isDone) => {
+            const findAndUpdateTask = (n) => {
+                if(n.id === nodeId) {
+                    const task = n.details.history.find(h => h.id === histId);
+                    if(task) task.done = isDone;
+                    return true;
+                }
+                if(n.children) return n.children.some(findAndUpdateTask);
+            };
+            findAndUpdateTask(crmData);
+            if(activeContact && activeContact.id === nodeId) loadProfile(activeContact, actParentName);
+            await save();
+        };
+
+        // ==========================================
+        // CENTRALIZED TASK DASHBOARD
+        // ==========================================
+        function renderGlobalTasks() {
+            const taskContainer = document.getElementById('global-task-list');
+            taskContainer.innerHTML = '';
+            let tasksFound = 0;
+
+            const crawlTasks = (n, parentName) => {
+                if(n.details && n.details.history) {
+                    n.details.history.forEach(h => {
+                        if(h.type === 'task' && !h.done) {
+                            tasksFound++;
+                            const div = document.createElement('div');
+                            div.className = 'global-task-item';
+                            div.innerHTML = `
+                                <input type="checkbox" class="task-checkbox" onclick="toggleGlobalTask('${n.id}', '${h.id}')">
+                                <div class="task-details">
+                                    <div class="task-account" onclick="loadProfileById('${n.id}')">🔗 ${n.name} (${parentName})</div>
+                                    <div class="task-content">${h.content}</div>
+                                    <div class="task-meta"><span>📅 Due: ${h.date}</span> <span>👤 Created by: ${h.author || 'User'}</span></div>
+                                </div>
+                            `;
+                            taskContainer.appendChild(div);
+                        }
+                    });
+                }
+                if(n.children) n.children.forEach(c => crawlTasks(c, n.name));
+            };
+            
+            crawlTasks(crmData, 'Root');
+            if(tasksFound === 0) {
+                taskContainer.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text-muted); font-size:1.1rem; border:1px dashed var(--border); border-radius:var(--radius-md);">🎉 All caught up! No pending tasks found.</div>';
+            }
+        }
+
+        window.toggleGlobalTask = async (nodeId, histId) => {
+            await toggleTaskStatus(nodeId, histId, true);
+            renderGlobalTasks(); // Refresh list immediately
+        };
+
+        window.loadProfileById = (targetId) => {
+            let foundNode = null; let foundParent = 'Root';
+            const find = (n, pName) => {
+                if(n.id === targetId) { foundNode = n; foundParent = pName; return true; }
+                if(n.children) return n.children.some(c => find(c, n.name));
+            };
+            find(crmData, 'Root');
+            if(foundNode) loadProfile(foundNode, foundParent);
+        };
+
+
+        // ==========================================
+        // BULK CSV IMPORTER
+        // ==========================================
+        document.getElementById('btn-import-csv').onclick = () => document.getElementById('csv-upload-input').click();
+        
+        document.getElementById('csv-upload-input').onchange = (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const text = event.target.result;
+                const rows = text.split('\n');
+                let importCount = 0;
+                
+                // Assuming format: Name,Role,Status,Value,Phone,Email
+                for(let i=1; i<rows.length; i++) {
+                    const cols = rows[i].split(',').map(c => c.replace(/^"|"$/g, '').trim());
+                    if(cols.length >= 1 && cols[0] !== '') {
+                        const newNode = {
+                            id: 'id_' + Date.now() + i,
+                            name: cols[0], type: 'contact',
+                            details: {
+                                title: cols[1] || '',
+                                status: cols[2] || 'Lead',
+                                value: Number(cols[3]) || 0,
+                                phone: cols[4] || '',
+                                email: cols[5] || '',
+                                customFields: [], history: [], notes: []
+                            }, children: []
+                        };
+                        // Push into Global Directory (Root)
+                        crmData.children.push(newNode);
+                        importCount++;
+                    }
+                }
+                alert(`Successfully imported ${importCount} records into the Global Directory.`);
+                renderTree();
+                await save();
+            };
+            reader.readAsText(file);
+        };
+
+
+        // ==========================================
+        // GENERAL SAVES & LOGIC
+        // ==========================================
         document.getElementById('btn-save-notes').onclick = async () => {
             const input = document.getElementById('prof-notes-input');
             const text = input.value.trim();
@@ -681,23 +845,19 @@
             
             const now = new Date();
             const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            // Get Current User
             const user = window.auth && window.auth.currentUser;
             const authorName = user ? (user.displayName || user.email.split('@')[0]) : 'Unknown User';
             
             activeContact.details.notes.push({ date: dateStr, text: text, author: authorName });
-            
             const btn = document.getElementById('btn-save-notes');
             btn.innerText = '✅ Added!';
             
             loadProfile(activeContact, actParentName); 
             await save();
-            
             setTimeout(() => btn.innerText = '➕ Add Note', 2000);
         };
 
-        // Action Forms
+        // Modal Action Forms
         document.getElementById('btn-edit-profile').onclick = () => {
             if(!activeContact) return;
             editingId = activeContact.id;
@@ -761,13 +921,9 @@
         window.closeModal = () => document.getElementById('modal-overlay').style.display = 'none';
 
         document.getElementById('btn-add-sub').onclick = () => {
-            editingId = null;
-            document.getElementById('modal-title').innerText = 'Add Under ' + activeContact.name;
-            document.getElementById('modal-parent-group').style.display = 'none';
-            document.getElementById('modal-type-group').style.display = 'block';
-            document.getElementById('entry-form').reset();
-            document.getElementById('custom-fields-editor').innerHTML = '';
-            document.getElementById('modal-overlay').style.display = 'flex';
+            editingId = null; document.getElementById('modal-title').innerText = 'Add Under ' + activeContact.name;
+            document.getElementById('modal-parent-group').style.display = 'none'; document.getElementById('modal-type-group').style.display = 'block';
+            document.getElementById('entry-form').reset(); document.getElementById('custom-fields-editor').innerHTML = ''; document.getElementById('modal-overlay').style.display = 'flex';
         };
 
         document.getElementById('btn-add-global').onclick = () => {
@@ -775,8 +931,7 @@
             document.getElementById('modal-parent-group').style.display = 'block'; document.getElementById('modal-type-group').style.display = 'block';
             const sel = document.getElementById('modal-parent'); sel.innerHTML = '';
             const fill = (n, d="") => { const opt = document.createElement('option'); opt.value = n.id; opt.innerText = d + n.name; sel.appendChild(opt); if(n.children) n.children.forEach(c => fill(c, d+"--")); };
-            fill(crmData); document.getElementById('entry-form').reset(); document.getElementById('custom-fields-editor').innerHTML = '';
-            document.getElementById('modal-overlay').style.display = 'flex';
+            fill(crmData); document.getElementById('entry-form').reset(); document.getElementById('custom-fields-editor').innerHTML = ''; document.getElementById('modal-overlay').style.display = 'flex';
         };
 
         document.getElementById('btn-delete-profile').onclick = async () => {
@@ -791,18 +946,18 @@
             }
         };
 
-        // SAVE ACTIVITY FEED (WITH AUTHOR)
         document.getElementById('btn-log-act').onclick = async () => {
             const date = document.getElementById('act-date').value;
             const text = document.getElementById('act-text').value;
+            const type = document.getElementById('act-type').value;
             if(!date || !text || !activeContact) return;
             if(!activeContact.details.history) activeContact.details.history = [];
             
-            // Get Current User
             const user = window.auth && window.auth.currentUser;
             const authorName = user ? (user.displayName || user.email.split('@')[0]) : 'Unknown User';
 
-            activeContact.details.history.push({ type: document.getElementById('act-type').value, date, content: text, author: authorName });
+            // Add ID and 'done' status for tasks
+            activeContact.details.history.push({ id: 'h_'+Date.now(), type: type, date, content: text, author: authorName, done: false });
             document.getElementById('act-text').value = ''; 
             await save(); loadProfile(activeContact, actParentName);
         };
@@ -814,7 +969,6 @@
             document.getElementById('dash-total').innerText = count; document.getElementById('dash-active').innerText = active; document.getElementById('dash-pipe-val').innerText = formatCurrency(pipe);
         }
 
-        // Kanban Drag and Drop Logic
         function renderKanban() {
             const cols = { lead: document.getElementById('col-lead'), active: document.getElementById('col-active'), closed: document.getElementById('col-closed') };
             const revs = { lead: 0, active: 0, closed: 0 };
@@ -823,14 +977,11 @@
             function findDeals(n) {
                 const s = (n.details?.status || '').toLowerCase();
                 if (s === 'lead' || s === 'active' || s === 'closed') {
-                    const card = document.createElement('div'); card.className = 'kanban-card';
-                    card.draggable = true;
+                    const card = document.createElement('div'); card.className = 'kanban-card'; card.draggable = true;
                     card.ondragstart = (e) => { e.dataTransfer.setData('pipeline-contact-id', n.id); card.style.opacity = '0.5'; };
                     card.ondragend = () => { card.style.opacity = '1'; };
-                    
                     card.innerHTML = `<h4>${n.name}</h4><p>${n.details.title || 'Account'}</p><div class="kanban-val">${formatCurrency(n.details.value)}</div>`;
                     card.onclick = () => loadProfile(n, 'Directory');
-                    
                     cols[s].appendChild(card); revs[s] += Number(n.details.value || 0);
                 }
                 if (n.children) n.children.forEach(findDeals);
@@ -841,15 +992,8 @@
 
         window.dropKanban = (e, newStatus) => {
             const id = e.dataTransfer.getData('pipeline-contact-id');
-            const updateStatus = (n) => {
-                if (n.id === id) {
-                    if(!n.details) n.details = {};
-                    n.details.status = newStatus;
-                    return true;
-                }
-                if (n.children) return n.children.some(updateStatus);
-            };
-            if (updateStatus(crmData)) { save(); renderKanban(); } // Force UI update
+            const updateStatus = (n) => { if (n.id === id) { if(!n.details) n.details = {}; n.details.status = newStatus; return true; } if (n.children) return n.children.some(updateStatus); };
+            if (updateStatus(crmData)) { save(); renderKanban(); } 
         };
 
         let curM = new Date().getMonth(); let curY = new Date().getFullYear();
