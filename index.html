@@ -148,12 +148,17 @@
         .info-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; letter-spacing: 0.05em;}
         .info-val { font-size: 0.9rem; color: var(--text-main); font-weight: 600; word-wrap: break-word; }
 
-        /* Sleek Timeline & Notes */
+        /* Sleek Timeline & Notes Threads */
         .timeline-input { display: flex; gap: 10px; margin-bottom: 20px; background: var(--bg-panel); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border); align-items: center; flex-wrap: wrap; box-shadow: var(--shadow-sm);}
         .form-control { width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-base); color: var(--text-main); font-size: 0.85rem; font-family: inherit; font-weight: 500; outline: none; transition: var(--transition); }
         .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); background: var(--bg-panel); }
         
-        textarea.form-control { resize: vertical; min-height: 80px; line-height: 1.4; }
+        /* Note Thread Items */
+        .note-thread-box { max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; padding-right: 4px;}
+        .note-item { background: var(--bg-base); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+        .note-item-header { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between;}
+        .note-item-text { font-size: 0.9rem; color: var(--text-main); white-space: pre-wrap; line-height: 1.4; }
+        textarea.form-control { resize: vertical; min-height: 70px; line-height: 1.4; }
         
         .tl-item { position: relative; padding-left: 24px; margin-bottom: 16px; }
         .tl-item::before { content: ''; position: absolute; left: 0; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
@@ -169,21 +174,7 @@
         .kanban-col { flex: 0 0 300px; display: flex; flex-direction: column; background: transparent; }
         .kanban-header { padding: 12px 16px; margin-bottom: 12px; border-radius: var(--radius-md); background: var(--bg-panel); border: 1px solid var(--border); font-weight: 800; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); }
         .kanban-body { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 100px; padding-bottom: 10px;}
-        
-        /* FIX: Kanban Card Shrinking */
-        .kanban-card { 
-            background: var(--bg-panel); 
-            border: 1px solid var(--border); 
-            border-radius: var(--radius-md); 
-            padding: 12px; 
-            cursor: grab; 
-            box-shadow: var(--shadow-sm); 
-            transition: var(--transition); 
-            position: relative; 
-            overflow: hidden; 
-            flex-shrink: 0; /* Prevents cards from squishing vertically */
-        }
-        
+        .kanban-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px; cursor: grab; box-shadow: var(--shadow-sm); transition: var(--transition); position: relative; overflow: hidden; flex-shrink: 0; }
         .kanban-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--border); transition: var(--transition); }
         .kanban-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary-light); }
         .kanban-card:hover::before { background: var(--primary); }
@@ -341,16 +332,17 @@
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <div class="panel">
                             <h3>General Notes</h3>
-                            <textarea id="prof-notes" class="form-control" placeholder="Enter persistent notes about this account or folder..."></textarea>
+                            <div id="prof-notes-thread" class="note-thread-box"></div>
+                            <textarea id="prof-notes-input" class="form-control" placeholder="Add a new note to the thread..."></textarea>
                             <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-                                <button class="btn btn-outline" id="btn-save-notes">💾 Save Notes</button>
+                                <button class="btn btn-outline" id="btn-save-notes">➕ Add Note</button>
                             </div>
                         </div>
 
                         <div class="panel" style="background:transparent; border:none; padding:0; box-shadow:none;">
                             <h3 style="margin-bottom:16px;">Activity Feed</h3>
                             <div class="timeline-input">
-                                <select id="act-type" class="form-control" style="width: auto; min-width: 90px; font-weight:700; cursor:pointer;"><option value="job">📅 Job</option><option value="note">📝 Note</option><option value="call">📞 Call</option></select>
+                                <select id="act-type" class="form-control" style="width: auto; min-width: 90px; font-weight:700; cursor:pointer;"><option value="job">📅 Job</option><option value="note">📝 Task</option><option value="call">📞 Call</option></select>
                                 <input type="date" id="act-date" class="form-control" style="width: auto; cursor:pointer; font-weight:600;">
                                 <input type="text" id="act-text" class="form-control" placeholder="Write a description..." style="flex:1;">
                                 <button class="btn btn-primary" id="btn-log-act">Save</button>
@@ -490,7 +482,8 @@
 
     <script>
         const US_STATES = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
-        const stateNodes = US_STATES.map(s => ({ id: 'st_'+s.toLowerCase().replace(/ /g,'_'), name: s, type: 'location', details: { status: 'Lead', history: [], notes: '' }, children: [] }));
+        // Notes initialized as an empty array to support threading
+        const stateNodes = US_STATES.map(s => ({ id: 'st_'+s.toLowerCase().replace(/ /g,'_'), name: s, type: 'location', details: { status: 'Lead', history: [], notes: [] }, children: [] }));
         const defaultData = { id: 'root', name: 'Global Directory', type: 'location', isOpen: true, children: [ { id: 'loc_usa', name: 'United States', type: 'location', isOpen: true, children: stateNodes } ] };
         
         let crmData = defaultData;
@@ -629,8 +622,6 @@
             document.getElementById('disp-phone').innerText = d.phone || 'N/A';
             document.getElementById('disp-parent').innerText = parentName || 'N/A';
             
-            document.getElementById('prof-notes').value = d.notes || '';
-            
             let icon = node.type === 'location' ? '📂' : node.type === 'company' ? '🏢' : getInitials(node.name);
             document.getElementById('prof-avatar').innerText = icon;
             document.getElementById('prof-avatar').style.background = (node.type === 'contact') ? getColor(node.name) : 'var(--primary-gradient)';
@@ -643,6 +634,27 @@
                 d.customFields.forEach(cf => { cfContainer.innerHTML += `<div class="info-row"><div class="info-label">${cf.key}</div><div class="info-val">${cf.value}</div></div>`; });
             } else { cfPanel.style.display = 'none'; }
 
+            // Render Notes Thread (With Legacy String Support)
+            const notesThread = document.getElementById('prof-notes-thread');
+            notesThread.innerHTML = '';
+            let noteArray = Array.isArray(d.notes) ? d.notes : (d.notes ? [{ date: 'Legacy Note', text: d.notes }] : []);
+            d.notes = noteArray; // Normalize to array internally
+            
+            if(noteArray.length === 0) {
+                notesThread.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; font-style:italic; padding: 4px;">No notes have been added yet.</div>';
+            } else {
+                noteArray.forEach(note => {
+                    notesThread.innerHTML += `
+                        <div class="note-item">
+                            <div class="note-item-header"><span>Added:</span> <span>${note.date}</span></div>
+                            <div class="note-item-text">${note.text}</div>
+                        </div>`;
+                });
+                // Auto-scroll to bottom of notes
+                notesThread.scrollTop = notesThread.scrollHeight;
+            }
+            document.getElementById('prof-notes-input').value = '';
+
             const tl = document.getElementById('prof-timeline'); tl.innerHTML = '';
             if(d.history) { [...d.history].reverse().forEach(h => {
                 const item = document.createElement('div'); item.className = 'tl-item';
@@ -652,15 +664,29 @@
             switchNav('profile');
         }
 
+        // SAVE THREADED NOTES
         document.getElementById('btn-save-notes').onclick = async () => {
-            if(!activeContact) return;
+            const input = document.getElementById('prof-notes-input');
+            const text = input.value.trim();
+            if(!activeContact || !text) return;
+            
             if(!activeContact.details) activeContact.details = {};
-            activeContact.details.notes = document.getElementById('prof-notes').value;
+            if(!Array.isArray(activeContact.details.notes)) {
+                activeContact.details.notes = activeContact.details.notes ? [{date: 'Legacy Note', text: activeContact.details.notes}] : [];
+            }
+            
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            activeContact.details.notes.push({ date: dateStr, text: text });
             
             const btn = document.getElementById('btn-save-notes');
-            btn.innerText = '✅ Saved!';
+            btn.innerText = '✅ Added!';
+            
+            loadProfile(activeContact, actParentName); // Refresh view
             await save();
-            setTimeout(() => btn.innerText = '💾 Save Notes', 2000);
+            
+            setTimeout(() => btn.innerText = '➕ Add Note', 2000);
         };
 
         // Action Forms
@@ -713,7 +739,7 @@
                 updateNode(crmData);
             } else {
                 const parentId = editingId ? null : (document.getElementById('modal-parent-group').style.display === 'none' ? activeContact.id : document.getElementById('modal-parent').value);
-                const newNode = { id: 'id_'+Date.now(), name: name, type: document.getElementById('modal-type').value, details: { status: status, value: val, title: document.getElementById('modal-title-input').value, phone: document.getElementById('modal-phone').value, email: document.getElementById('modal-email').value, customFields: cfs, history: [], notes: '' }, children: [] };
+                const newNode = { id: 'id_'+Date.now(), name: name, type: document.getElementById('modal-type').value, details: { status: status, value: val, title: document.getElementById('modal-title-input').value, phone: document.getElementById('modal-phone').value, email: document.getElementById('modal-email').value, customFields: cfs, history: [], notes: [] }, children: [] };
                 const addNode = (n) => {
                     if (n.id === parentId) { n.children.push(newNode); n.isOpen = true; return true; }
                     if (n.children) return n.children.some(addNode);
